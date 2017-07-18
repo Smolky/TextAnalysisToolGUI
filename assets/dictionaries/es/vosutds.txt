@@ -1,0 +1,5 @@
+les
+os
+ustedes
+vosotr.*
+vuestr.*

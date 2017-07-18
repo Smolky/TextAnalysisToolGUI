@@ -1,0 +1,8 @@
+contigo
+te
+tu
+tú
+tus
+tuya.*
+tuyo.*
+vos

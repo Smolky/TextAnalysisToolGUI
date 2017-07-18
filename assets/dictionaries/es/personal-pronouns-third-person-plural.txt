@@ -1,0 +1,9 @@
+consigo
+ellas
+ellos
+les
+se
+su
+sus
+suya.*
+suyo.*

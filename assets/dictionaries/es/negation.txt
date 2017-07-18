@@ -1,0 +1,16 @@
+jamás
+nada
+nadie
+negación
+negacion.*
+negativ.*
+nel
+ni
+ningún
+ningun.*
+no
+nop
+nope
+nulo
+nunca
+tampoco
