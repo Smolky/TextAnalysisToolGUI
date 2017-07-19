@@ -95,10 +95,47 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+   
 main {
-    max-width: 80rem;
     margin: 0 auto;
+    padding-left: 20rem;
 }
+
+
+.filter-wrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 20rem;
+    border-right: 1px solid black;
+    padding: 1rem;
+    background-color: #a71930;
+}
+
+.filter-wrapper h1 a,
+.filter-wrapper h1,
+.filter-wrapper label,
+.filter-wrapper p,
+.filter-wrapper li {
+    color: white;
+}
+
+h1 {
+    margin: 0 0 1rem 0;
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+h1 a {
+    text-decoration: none;
+}
+
+label small {
+    font-size: .7em;
+    opacity: .7;
+}
+
 
 pre {
     min-height: 10rem;

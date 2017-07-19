@@ -4,6 +4,11 @@
 require "vendor/autoload.php";
 
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 // Twitter
 define ('TWITTER_KEY', 'f2Jmemv9jXCdSZAqQmwKgnQZu');
 define ('TWITTER_SECRET', 'qDXvXA3tyJlvYWwMNCc5hjB3x3Oi0lX8jMhUjW9gEGx7BA79IC');
@@ -21,7 +26,7 @@ $tweets_links = array ();
 
 
 // Dictionary
-if ('en' == $_POST['dictionary']) {
+if (isset ($_POST['dictionary']) && 'en' == $_POST['dictionary']) {
     $dictionary = 'assets/configuration/english.xml';
     
 } else {
@@ -62,10 +67,10 @@ function store_tweets ($query) {
     
     
     // Fetch information
-    foreach ($responses->{statuses} as $index => $tweet) {
+    foreach ($responses->statuses as $index => $tweet) {
     
         // Get text
-        $tweet_text = $tweet->{text};
+        $tweet_text = $tweet->text;
         
         
         // Parse string to remove initial junky words
@@ -79,26 +84,49 @@ function store_tweets ($query) {
         
         
         // Store links (in the same order)
-        $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->{id};
+        $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->id;
         
         
         // Store content
         file_put_contents ('tweets/' . str_pad ($index, 3, "0", STR_PAD_LEFT) . '.txt', $tweet_text);
         
-    }    
-
+    }
 }
 
 
 // Connect
-if ("submit" == $_POST['form-action']) {
+if ("submit" == ($_POST['form-action'] ?? null)) {
     
     // Remove files
     array_map ('unlink', glob("tweets/*"));
 
 
+    // Uploading files
+    if (isset ($_FILES) && isset ($_FILES[0]) && ! isset ($_FILES[0]['error']) ) {
+        
+        $file = reset ($_FILES);
+        
+        switch ($file['type']) {
+            default:
+            case 'text/plain':
+                file_put_contents ('tweets/000.txt', file_get_contents ($file['tmp_name']));
+                break;
+                
+            case 'application/octet-stream':
+                $zip = new \ZipArchive;
+                $res = $zip->open ($file['tmp_name']);
+                
+                if (true === $res) {
+                    $zip->extractTo ('tweets');
+                    $zip->close();
+                }
+                break;
+        }
+        
+
+    
     // Store results
-    if ($_POST['query']) {
+    } elseif ($_POST['query']) {
         store_tweets ($_POST['query']);
         
     } elseif ($_POST['content']) {
@@ -117,13 +145,15 @@ if ("submit" == $_POST['form-action']) {
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>UMTextStats Sample</title>
+        <title>UMUTextStats GUI</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        
         
         <link rel="stylesheet" href="css/main.css?v=<?= rand (1, 1000) ?>">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
@@ -131,169 +161,197 @@ if ("submit" == $_POST['form-action']) {
     <body>
         
         <main>
-            <div class="row">
-                <div class="col-md-12">
+            
+            <div class="filter-wrapper">
+            
+                <!-- Title -->
+                <h1>
+                    <a href="/umutextstats-gui/">
+                        UMUTextStats GUI
+                    </a>
+                </h1>
+        
+                <p>
+                    This is a GUI tool to use the <em>UMUTextStats</em> tool. 
+                </p>
                 
-                    <!-- Title -->
-                    <h1>UMTextStats</h1>
-                    <p>
-                        This is a sample tool to validate <em>UMTextStats</em> with sample input. These input
-                        will be fetched using the Twitter API and recovering the most popular tweets 
-                        based on query string.
-                    </p>
+                <form method="post" enctype="multipart/form-data">
                     
-                    <p>
-                        Spanish dictionaries can be found at: 
-                        <a href="https://github.com/Smolky/TextAnalysisTool/tree/master/assets/dictionaries/es" target="_Blank">
-                            https://github.com/Smolky/TextAnalysisTool/tree/master/assets/dictionaries/es
-                        </a>
-                    </p>
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="form-action" value="submit">
                     
                     
-                    <!-- Form -->
-                    <div class="row">
-                        <div class="col-md-4">
-                    
-                            <form method="post">
-                                
-                                <!-- Hidden fields -->
-                                <input type="hidden" name="form-action" value="submit">
-                                
-                                
-                                <!-- Select dictionary -->
-                                <div class="form-group">
-                                    <label for="dictionary">Dictionary</label>
-                                    <select name="dictionary" class="form-control">
-                                        <option <?= $_POST['dictionary'] == 'es' ? 'selected' : '' ?> value="es">Spanish</option>
-                                        <option <?= $_POST['dictionary'] == 'en' ? 'selected' : '' ?> value="en">English</option>
-                                    </select>
-                                </div>
-                                
-                                
-                                <!-- Text -->
-                                <div class="form-group">
-                                    <label for="query">Twitter query string</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        name="query" 
-                                        placeholder="Cadena de búsqueda para tweets" 
-                                        value="<?= htmlspecialchars ($_POST['query']) ?>" 
-                                    />
-                                </div>
-                                
-                                
-                                <!-- Content -->
-                                <div class="form-group">
-                                    <label for="query">General purpose content</label>
-                                    
-                                    <p>
-                                        Alternatively, you can copy paste a long text to be validated
-                                        directly
-                                    </p>
-                                
-                                    <textarea 
-                                        rows="3"
-                                        name="content" 
-                                        class="form-control"
-                                        placeholder="Cadena de texto"
-                                    ><?= htmlspecialchars ($_POST['content']) ?></textarea>
-                                        
-                                </div>
-                                
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">
-                                        Enviar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        
-                        <!-- Right side -->
-                        <div class="col-md-8">
-                        
-                            <!-- Results -->
-                            <h3>Results</h3>
-                            
-                            
-                            <?php if ($output) : ?>
-                                <table class="table table-bordered table-hover table-striped table-responsive">
-                                
-                                    <colgroup>
-                                        <col span="1" style="background-color: #eee">
-                                    </colgroup>
-                                
-                                    <?php foreach ($output as $index => $line) : ?>
-                                        <tr>
-                                            <th>
-                                                <?= $index == 0 ? '&nbsp;' : '' ?>
-                                                <?php if ($index != 0) : ?>
-                                                
-                                                    <?php if ($tweets_links[$index + 1]) : ?>
-                                                    <a href="<?= $tweets_links[$index + 1] ?>" target="_blank">
-                                                    <?php endif ?>
-                                                        <strong title="<?= $index ?>. <?= str_replace ("\n", "", $tweets[$index + 1]) ?>">
-                                                            <?= str_pad ($index, 6, " ") ?>
-                                                        </strong>
-                                                    <?php if ($tweets_links[$index + 1]) : ?>
-                                                    </a>
-                                                    <?php endif ?>
-                                                <?php endif ?>
-                                            </th>
-                
-                                            <?php foreach (explode (',', $line) as $dimension_index => $output) : ?>
-                                            
-                                                <?php if ($index == 0) : ?>
-                                                
-                                                    <?php $full_description = $dimensions[$dimension_index] ?>
-                                                    <?php $ident = strlen($full_description)-strlen(ltrim($full_description)); ?>
-                                                
-                                                    <?php preg_match_all ("/\[([^\]]*)\]/", $full_description, $parts); ?>
-                                                    
-                                                    <?php
-                                                    
-                                                        $is_composite = $parts[0][0] == '[CompositeDimension]';
-                                                    
-                                                        // Prepare title
-                                                        $title = $parts[0][0];
-                                                        if (1 == count ($parts[0])) {
-                                                        
-                                                        } else if (2 == count ($parts[0])) {
-                                                            $title .= "&#13;" . $parts[0][1];
-                                                        
-                                                        } else if (3 == count ($parts[0])) {
-                                                            $title .= " " 
-                                                                . $parts[0][1] 
-                                                                . "&#13;&#13;" 
-                                                                . $parts[0][2]
-                                                            ;
-                                                        }
-                                                    ?>
-                                                    
-                                                    <th data-level="<?= $ident / 4?>" title="<?= $title ?>" class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level">
-                                                        <?= $output ?>
-                                                        
-                                                        <?php if ($is_composite) : ?>
-                                                            <button type="button" class="toggle-button toggle-cols-action">
-                                                                &nbsp;
-                                                            </Button>
-                                                        <?php endif ?>
-                                                        
-                                                    </th>
-                                                <?php else : ?>
-                                                    <td><?= $output ?></td>
-                                                <?php endif ?>
-                                            <?php endforeach ?>
-                
-                                        </tr>
-                                    <?php endforeach ?>
-                                </table>
-                            <?php endif ?>
-                        </div>
+                    <!-- Select dictionary -->
+                    <div class="form-group">
+                        <label for="dictionary">Dictionary</label>
+                        <select name="dictionary" class="form-control">
+                            <?php foreach (array ('es' => 'Spanish', 'en' => 'English') as $key => $language) : ?>
+                                <option 
+                                    data-url="https://github.com/Smolky/TextAnalysisTool/tree/master/assets/dictionaries/<?= $key ?>" 
+                                    <?= ($_POST['dictionary'] ?? '') == $key ? 'selected' : '' ?> 
+                                    value="<?= $key ?>">
+                                    <?= $language ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
                     </div>
-                </div>
+                    
+                    
+                    <!-- Text -->
+                    <div class="form-group">
+                        <label for="query">Twitter query string</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            name="query" 
+                            placeholder="Cadena de búsqueda para tweets" 
+                            value="<?= htmlspecialchars ($_POST['query'] ?? '') ?>" 
+                        />
+                    </div>
+                    
+                    
+                    <!-- File -->
+                    <div class="form-group">
+                        <label for="query">
+                            File
+                            <small>allows .txt. .zip</small>
+                        </label>
+                        <input 
+                            type="file" 
+                            class="form-control" 
+                            name="file" 
+                            placeholder="Fichero .txt o .rar" 
+                            accept=".txt,.csv,application/zip,application/rar"
+                        />
+                    </div>
+                    
+                    
+                    <!-- Content -->
+                    <div class="form-group">
+                        <label for="query">General purpose content</label>
+                        
+                        <p>
+                            Alternatively, you can copy paste a long text to be validated
+                            directly
+                        </p>
+                    
+                        <textarea 
+                            rows="3"
+                            name="content" 
+                            class="form-control"
+                            placeholder="Cadena de texto"
+                        ><?= htmlspecialchars ($_POST['content'] ?? '') ?></textarea>
+                            
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            Send
+                        </button>
+                        
+                        <?php if (isset ($output)) : ?>
+                            <button type="button" class="btn btn-default export-csv-action">
+                                Export to CSV
+                                <span class="fa fa-download"></span>
+                            </button>
+                        <?php endif ?>
+                        
+                    </div>
+                </form>
             </div>
+
+        
+        
+            <!-- Right side -->
+            <?php if (isset ($output)) : ?>
+                <table class="table table-bordered table-hover table-striped table-responsive">
+                
+                    <colgroup>
+                        <col span="1" style="background-color: #eee">
+                    </colgroup>
+                
+                    <?php foreach ($output as $index => $line) : ?>
+                    
+                        <?php if ($index == 0) : ?>
+                            <thead>
+                        <?php elseif ($index == 1) : ?>
+                            <tbody>
+                        <?php endif ?>
+                    
+                        <tr>
+                            <th>
+                                <?= $index == 0 ? '&nbsp;' : '' ?>
+                                <?php if ($index != 0) : ?>
+                                
+                                    <?php if (isset ($tweets_links[$index + 1])) : ?>
+                                    <a href="<?= $tweets_links[$index + 1] ?? null ?>" target="_blank">
+                                    <?php endif ?>
+                                        <strong title="<?= $index ?>. <?= isset ($tweets[$index + 1]) ? str_replace ("\n", "", $tweets[$index + 1]) : "" ?>">
+                                            <?= str_pad ($index, 6, " ") ?>
+                                        </strong>
+                                    <?php if (isset ($tweets_links[$index + 1])) : ?>
+                                    </a>
+                                    <?php endif ?>
+                                <?php endif ?>
+                            </th>
+
+                            <?php foreach (explode (',', $line) as $dimension_index => $output) : ?>
+                            
+                                <?php if ($index == 0) : ?>
+                                
+                                    <?php $full_description = $dimensions[$dimension_index] ?? null ?>
+                                    <?php $ident = strlen($full_description)-strlen(ltrim($full_description)); ?>
+                                
+                                    <?php preg_match_all ("/\[([^\]]*)\]/", $full_description, $parts); ?>
+                                    
+                                    <?php
+                                    
+                                        $dimension_key = $parts[0][0] ?? null;
+                                        $is_composite = $dimension_key == '[CompositeDimension]';
+                                    
+                                        // Prepare title
+                                        $title = $dimension_key;
+                                        if (1 == count ($parts[0])) {
+                                        
+                                        } else if (2 == count ($parts[0])) {
+                                            $title .= "&#13;" . $parts[0][1];
+                                        
+                                        } else if (3 == count ($parts[0])) {
+                                            $title .= " " 
+                                                . $parts[0][1] 
+                                                . "&#13;&#13;" 
+                                                . $parts[0][2]
+                                            ;
+                                        }
+                                    ?>
+                                    
+                                    <th data-level="<?= $ident / 4?>" title="<?= $title ?>" class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level">
+                                        <span><?= $output ?></span>
+                                        
+                                        <?php if ($is_composite) : ?>
+                                            <button type="button" class="toggle-button toggle-cols-action">
+                                                &nbsp;
+                                            </Button>
+                                        <?php endif ?>
+                                        
+                                    </th>
+                                <?php else : ?>
+                                    <td>
+                                        <?= is_numeric ($output) ? number_format ($output, 2) : $output ?>
+                                    </td>
+                                <?php endif ?>
+                            <?php endforeach ?>
+
+                        </tr>
+                        
+                        <?php if ($index == 0) : ?>
+                            </thead>
+                        <?php endif ?>
+                        
+                    <?php endforeach ?>
+                    </tbody>
+                </table>
+            <?php endif ?>
         </main>
 
         
@@ -305,6 +363,39 @@ if ("submit" == $_POST['form-action']) {
             $(document).ready (function () {
             
                 var table = $('table');
+                
+                
+                $('.export-csv-action').click (function () {
+                    
+                    var headers = $("thead th span", table).map (function () {return $.trim(this.innerHTML);}).get()
+
+                    var rows = $("tbody > tr", table).map (function () { 
+                        return [$("td", this).map (function () { 
+                            return $.trim (this.innerHTML);
+                        }).get()];
+                    }).get();
+                    
+                    var csv = "";
+                    csv = csv + headers.join (';') + "\n";
+                    $.each (rows, function (index, row) {
+                        csv = csv + row.join (';') + "\n";
+                    });
+                    
+                    $.ajax ({
+                        url: 'export-csv.php',
+                        type: 'POST',
+                        data: {
+                            csv: csv
+                        },
+                        success: function (result) {
+                            var blob=new Blob([result]);
+                            var link=document.createElement('a');
+                            link.href=window.URL.createObjectURL(blob);
+                            link.download="umutextstats.csv";
+                            link.click();
+                        }
+                    });
+                });
             
                 // Toggle
                 table.find ('.toggle-cols-action').click (function () {
