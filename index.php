@@ -1,22 +1,34 @@
 <?php
 
+/**
+ * UMUTExtStats GUI
+ *
+ * This project is a online GUI for the UMUTextStats Tool 
+ * used to collect statictics from TEXTs
+ * 
+ * @author José Antonio García Díaz <joseantonio.garcia8@um.es>
+ *
+ * @package UMUTextStats-GUI
+ */
+
+// Error configuration
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ 
+ 
 // Autoload
 require "vendor/autoload.php";
 
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-
-// Twitter
+// Constants
 define ('TWITTER_KEY', 'f2Jmemv9jXCdSZAqQmwKgnQZu');
 define ('TWITTER_SECRET', 'qDXvXA3tyJlvYWwMNCc5hjB3x3Oi0lX8jMhUjW9gEGx7BA79IC');
 define ('TWITTER_ACCESS_TOKEN', '290025147-wiq2HHHPRILjS4pPQz3XCt3BkL6u6d4tFQuFETu0');
 define ('TWITTER_ACCESS_TOKEN_SECRET', 'A3UzqUHbKjh6PLSndaFVLRal7v4q43W5LohkGwXuOTPZ5');
 
 
-// Use
+// Use name spaces
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 
@@ -25,9 +37,10 @@ $tweets = array ();
 $tweets_links = array ();
 
 
-// Dictionary
+// Load dictionary, Spanish by default
 if (isset ($_POST['dictionary']) && 'en' == $_POST['dictionary']) {
     $dictionary = 'assets/configuration/english.xml';
+
     
 } else {
     $dictionary = 'assets/configuration/spanish.xml';
@@ -35,111 +48,76 @@ if (isset ($_POST['dictionary']) && 'en' == $_POST['dictionary']) {
 }
 
 
-exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -d -c " . $dictionary . " -f %s,", $dimensions); 
+// Collect dimensions
+$raw_config = file_get_contents ($dictionary);
+$xml_config = simplexml_load_string ($raw_config);
+$dimensions = $xml_config->dimensions->dimension;
+$linear_dimensions = array ();
 
+    
+/**
+ * build_linear_dimensions
+ *
+ * @package UMUTextStats-GUI
+ */
+function build_linear_dimensions ( & $linear_dimensions, $dimension) {
+    $linear_dimensions[] = $dimension;
+    if (isset ($dimension->dimensions)) foreach ($dimension->dimensions->dimension as $sub_dimension) {
+        build_linear_dimensions ($linear_dimensions, $sub_dimension);
+    }
+}
+
+foreach ($dimensions as $dimension) {
+    build_linear_dimensions ($linear_dimensions, $dimension);
+}
 
 
 /**
- * store_tweets
+ * print_table_header_cell
  *
- * @package UMUTextStats Sample
+ * @package UMUTextStats-GUI
  */
-function store_tweets ($query) {
+function print_table_header_cell ($dimension, $level = 0) {
 
-    // Global
-    global $tweets;
-    global $tweets_links;
-
+    $is_composite = isset ($dimension->dimensions);
+    $title = '';
     
-    // Connect
-    $connection = new TwitterOAuth (TWITTER_KEY, TWITTER_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET);
-    $content = $connection->get("account/verify_credentials");
-
-    
-    // Fetch data
-    $responses = $connection->get("search/tweets", [
-        "count" => 25, 
-        "q" => $query,
-        "lang" => "es",
-        "result_type" => "recent",
-        "include_entities" => false
-    ]);
-    
-    
-    // Fetch information
-    foreach ($responses->statuses as $index => $tweet) {
-    
-        // Get text
-        $tweet_text = $tweet->text;
-        
-        
-        // Parse string to remove initial junky words
-        // like "RT" or the mentions to other persons
-        $tweet_text = trim (preg_replace ('/^RT/i', '', $tweet_text));
-        $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
-        
-        
-        // Store tweets
-        $tweets[] = $tweet_text;
-        
-        
-        // Store links (in the same order)
-        $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->id;
-        
-        
-        // Store content
-        file_put_contents ('tweets/' . str_pad ($index, 3, "0", STR_PAD_LEFT) . '.txt', $tweet_text);
-        
+    if ($is_composite && isset ($dimension->strategy)) {
+        $title .= "[composite]" . " [" . $dimension->strategy . "]\n\n";
+    } else if (isset ($dimension->class)) {
+        $title .= "[" . $dimension->class . "]\n\n";
     }
-}
-
-
-// Connect
-if ("submit" == ($_POST['form-action'] ?? null)) {
     
-    // Remove files
-    array_map ('unlink', glob("tweets/*"));
+    $title .= trim ($dimension->description);
 
-
-    // Uploading files
-    if (isset ($_FILES) && isset ($_FILES[0]) && ! isset ($_FILES[0]['error']) ) {
+    ?>
+    <th data-level="<?= $level ?>" class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level">
         
-        $file = reset ($_FILES);
+        <span data-toggle="tooltip" title="<?= $title ?>" data-placement="bottom">
+            <?= $dimension->key ?>
+        </span>
         
-        switch ($file['type']) {
-            default:
-            case 'text/plain':
-                file_put_contents ('tweets/000.txt', file_get_contents ($file['tmp_name']));
-                break;
-                
-            case 'application/octet-stream':
-                $zip = new \ZipArchive;
-                $res = $zip->open ($file['tmp_name']);
-                
-                if (true === $res) {
-                    $zip->extractTo ('tweets');
-                    $zip->close();
-                }
-                break;
+        <?php if (isset ($dimension->dimensions)) : ?>
+            <button type="button" class="toggle-button toggle-cols-action">
+                &nbsp;
+            </Button>
+        <?php endif ?>
+    </th>
+    
+    <?php
+    if ($is_composite) {
+        foreach ($dimension->dimensions->dimension as $sub_dimension) {
+            print_table_header_cell ($sub_dimension, $level + 1);
         }
-        
-
-    
-    // Store results
-    } elseif ($_POST['query']) {
-        store_tweets ($_POST['query']);
-        
-    } elseif ($_POST['content']) {
-        file_put_contents ('tweets/000.txt', $_POST['content']);
-    
     }
-    
-
-    
-    // Parse
-    exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s tweets -c " . $dictionary . " -f %s,", $output); 
-
 }
+
+
+    
+// Header
+header ('Content-Type: text/html; charset=utf-8');
+
+
 ?><!doctype html>
 <html class="no-js" lang="">
     <head>
@@ -150,16 +128,25 @@ if ("submit" == ($_POST['form-action'] ?? null)) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        
-        
         <link rel="stylesheet" href="css/main.css?v=<?= rand (1, 1000) ?>">
+        <style>
+            <?php foreach ($linear_dimensions as $index => $dimension) : ?>
+                <?php if (isset ($dimension->class) && $dimension->class == 'PercentageWordsCapturedFromDictionary') : ?>
+            table tbody td:nth-child(<?= $index + 2 ?>) span:after {
+                content: "%";
+                font-size: .7em;
+                opacity: .7;
+            }
+                <?php endif ?>
+            <?php endforeach ?> 
+        </style>
+        
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
-        
+    
         <main>
             
             <div class="filter-wrapper">
@@ -183,7 +170,12 @@ if ("submit" == ($_POST['form-action'] ?? null)) {
                     
                     <!-- Select dictionary -->
                     <div class="form-group">
-                        <label for="dictionary">Dictionary</label>
+                        <label for="dictionary">
+                            Dictionary
+                            <a href="javascript:null" data-toggle="modal" data-target="#config">
+                                <span class="fa fa-cog"></span>
+                            </a>
+                        </label>
                         <select name="dictionary" class="form-control">
                             <?php foreach (array ('es' => 'Spanish', 'en' => 'English') as $key => $language) : ?>
                                 <option 
@@ -194,6 +186,7 @@ if ("submit" == ($_POST['form-action'] ?? null)) {
                                 </option>
                             <?php endforeach ?>
                         </select>
+                        
                     </div>
                     
                     
@@ -254,115 +247,107 @@ if ("submit" == ($_POST['form-action'] ?? null)) {
                                 Export to CSV
                                 <span class="fa fa-download"></span>
                             </button>
+                            
+                            <div class="stats">
+                                Time ellapsed: <?= $now - $then ?> <em>ms</em>
+                            </div>
+                            
                         <?php endif ?>
-                        
                     </div>
                 </form>
             </div>
-
-        
-        
+            
+            
             <!-- Right side -->
-            <?php if (isset ($output)) : ?>
-                <table class="table table-bordered table-hover table-striped table-responsive">
+            <table class="table table-bordered table-hover table-striped table-responsive ">
+            
+                <colgroup>
+                    <col span="1" style="background-color: #eee">
+                </colgroup>
                 
-                    <colgroup>
-                        <col span="1" style="background-color: #eee">
-                    </colgroup>
-                
-                    <?php foreach ($output as $index => $line) : ?>
+                <!-- Head -->
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <?php foreach ($dimensions as $dimension) : ?>
+                            <?php print_table_header_cell ($dimension) ?>
+                        <?php endforeach ?>
+                    </tr>
+                </thead>
                     
-                        <?php if ($index == 0) : ?>
-                            <thead>
-                        <?php elseif ($index == 1) : ?>
-                            <tbody>
-                        <?php endif ?>
                     
-                        <tr>
-                            <th>
-                                <?= $index == 0 ? '&nbsp;' : '' ?>
-                                <?php if ($index != 0) : ?>
-                                
-                                    <?php if (isset ($tweets_links[$index + 1])) : ?>
-                                    <a href="<?= $tweets_links[$index + 1] ?? null ?>" target="_blank">
-                                    <?php endif ?>
-                                        <strong title="<?= $index ?>. <?= isset ($tweets[$index + 1]) ? str_replace ("\n", "", $tweets[$index + 1]) : "" ?>">
-                                            <?= str_pad ($index, 6, " ") ?>
-                                        </strong>
-                                    <?php if (isset ($tweets_links[$index + 1])) : ?>
-                                    </a>
-                                    <?php endif ?>
-                                <?php endif ?>
-                            </th>
-
-                            <?php foreach (explode (',', $line) as $dimension_index => $output) : ?>
-                            
-                                <?php if ($index == 0) : ?>
-                                
-                                    <?php $full_description = $dimensions[$dimension_index] ?? null ?>
-                                    <?php $ident = strlen($full_description)-strlen(ltrim($full_description)); ?>
-                                
-                                    <?php preg_match_all ("/\[([^\]]*)\]/", $full_description, $parts); ?>
-                                    
-                                    <?php
-                                    
-                                        $dimension_key = $parts[0][0] ?? null;
-                                        $is_composite = $dimension_key == '[CompositeDimension]';
-                                    
-                                        // Prepare title
-                                        $title = $dimension_key;
-                                        if (1 == count ($parts[0])) {
-                                        
-                                        } else if (2 == count ($parts[0])) {
-                                            $title .= "&#13;" . $parts[0][1];
-                                        
-                                        } else if (3 == count ($parts[0])) {
-                                            $title .= " " 
-                                                . $parts[0][1] 
-                                                . "&#13;&#13;" 
-                                                . $parts[0][2]
-                                            ;
-                                        }
-                                    ?>
-                                    
-                                    <th data-level="<?= $ident / 4?>" title="<?= $title ?>" class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level">
-                                        <span><?= $output ?></span>
-                                        
-                                        <?php if ($is_composite) : ?>
-                                            <button type="button" class="toggle-button toggle-cols-action">
-                                                &nbsp;
-                                            </Button>
-                                        <?php endif ?>
-                                        
-                                    </th>
-                                <?php else : ?>
-                                    <td>
-                                        <?= is_numeric ($output) ? number_format ($output, 2) : $output ?>
-                                    </td>
-                                <?php endif ?>
-                            <?php endforeach ?>
-
-                        </tr>
-                        
-                        <?php if ($index == 0) : ?>
-                            </thead>
-                        <?php endif ?>
-                        
-                    <?php endforeach ?>
-                    </tbody>
-                </table>
-            <?php endif ?>
+                <!-- TBody -->
+                <tbody></tbody>
+            
+            </table>
         </main>
+        
+        
+        <!-- Config -->
+        <div class="modal fade" id="config" tabindex="-1" role="dialog" aria-labelledby="config">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Config
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <textarea class="form-control"><?= $raw_config ?></textarea>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
 
         
         <!-- Javascripts -->
         <script src="js/vendor/jquery-1.12.0.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
         <script>
             $(document).ready (function () {
             
+                var form = $('form');
+                var submit = form.find ('[type="submit"]');
                 var table = $('table');
+                var body = table.find ('tbody');
+                
+                // Handle submit
+                form.submit (function (e) {
+                
+                    // Prevent default
+                    e.preventDefault ();
+                    
+                    submit.prop ('disabled', true);
+                    
+                    $.ajax ({
+                        method: 'POST',
+                        url: 'process.php', 
+                        dataType: "html",
+                        data:  {
+                            'query': form.find ('[name="query"]').val (),
+                            'content': form.find ('[name="content"]').val (),
+                        },
+                        success: function (html) {
+                            body.html (html);
+                            submit.prop ('disabled', false);
+                        }
+                    });
+                    
+                    
+                    return false;
+                });
+            
+            
+            
+                
                 
                 
                 $('.export-csv-action').click (function () {
@@ -370,7 +355,7 @@ if ("submit" == ($_POST['form-action'] ?? null)) {
                     var headers = $("thead th span", table).map (function () {return $.trim(this.innerHTML);}).get()
 
                     var rows = $("tbody > tr", table).map (function () { 
-                        return [$("td", this).map (function () { 
+                        return [$("td span", this).map (function () { 
                             return $.trim (this.innerHTML);
                         }).get()];
                     }).get();

@@ -94,8 +94,7 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
-
-   
+  
 main {
     margin: 0 auto;
     padding-left: 20rem;
@@ -104,6 +103,7 @@ main {
 
 .filter-wrapper {
     position: fixed;
+    z-index: 5;
     top: 0;
     bottom: 0;
     left: 0;
@@ -113,6 +113,7 @@ main {
     background-color: #a71930;
 }
 
+.filter-wrapper .stats,
 .filter-wrapper h1 a,
 .filter-wrapper h1,
 .filter-wrapper label,
@@ -178,6 +179,20 @@ th {
     border-left: 5px solid transparent;
 }
 
+td {
+    font-family: monospace;
+}
+
+.table-hover>tbody>tr:hover,
+.table-hover>tbody>tr:hover > th,
+.table-hover>tbody>tr:hover > td {
+    background-color: #333;
+    color: white;
+}
+
+.table-hover>tbody>tr > td:hover {
+    background-color: #a71930;
+}
 
 .th-deep-level[data-level="1"] {
     background: #aaa;
@@ -195,6 +210,37 @@ th {
     background: #ccc;
 }
 
+.modal textarea {
+    width: 100%;
+    font-family: monospace;
+    min-height: 70vh;
+    line-height: 1.5;
+    border-style: solid;
+    background: #333;
+    color: white;
+}
+
+/* Override bootstrap */
+.tooltip-inner {
+    white-space:pre-wrap;
+    text-align: left;
+    min-width: 20rem;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #ffe0e0;
+}
+
+table tbody td {
+    text-align: right;
+}
+
+#foot-notification-pop {
+    position: absolute;
+    bottom: 0px;
+    background-color:#fff;
+    width:70%
+}
 
 
 

@@ -58,7 +58,8 @@
         
         <!-- LanguageMetricsDimension -->
         <dimension>
-            <key>lng-metrics</key>
+            <key>structural</key>
+            <description>Metrics to determine the complexity of the words</description>
             <dimensions>
                 <dimension>
                     <key>wps</key>
@@ -83,47 +84,61 @@
                     <dictionary>es</dictionary>
                     <description>The number of words inside a dictionary</description>
                 </dimension>
+                <dimension>
+                    <key>Dic %</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>es</dictionary>
+                    <description>The percentage of words inside a dictionary</description>
+                </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- FunctionWordsDimension -->
         <dimension>
-            <key>lng-function</key>
+            <key>pronouns</key>
+            <description>Personal and impersonal pronouns</description>
             <dimensions>
                 <dimension>
                     <key>personal</key>
+                    <description>Personal pronouns</description>
                     <dimensions>
                         <dimension>
-                            <key>FirstPerson</key>
-                            <strategy>CompositeStrategyMax</strategy>
+                            <key>first-person</key>
                             <dimensions>
                                 <dimension>
-                                    <key>I</key>
-                                    <class>MatchingRegularExpressionsFromDictionary</class>
+                                    <key>first-person-singular</key>
+                                    <description>Personal pronouns, first person, singular</description>
+                                    <class>PercentageWordsCapturedFromDictionary</class>
                                     <dictionary>personal-pronouns-first-person-singular</dictionary>
                                 </dimension>
                                 <dimension>
-                                    <key>We</key>
-                                    <class>MatchingRegularExpressionsFromDictionary</class>
+                                    <key>first-person-plural</key>
+                                    <description>Personal pronouns, first person, plural</description>
+                                    <class>PercentageWordsCapturedFromDictionary</class>
                                     <dictionary>personal-pronouns-first-person-plural</dictionary>
                                 </dimension>
                             </dimensions>
                         </dimension>
                         <dimension>
-                            <key>You</key>
-                            <class>MatchingRegularExpressionsFromDictionary</class>
+                            <key>second-person</key>
+                            <description>Personal pronouns, second person</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
                             <dictionary>personal-pronouns-second-person</dictionary>
                         </dimension>
                         <dimension>
                             <key>ThirdPerson</key>
                             <dimensions>
                                 <dimension>
-                                    <key>ThirdSingular</key>
-                                    <class>MatchingRegularExpressionsFromDictionary</class>
+                                    <key>third-person-singular</key>
+                                    <description>Personal pronouns, third person, singular</description>
+                                    <class>PercentageWordsCapturedFromDictionary</class>
                                     <dictionary>personal-pronouns-third-person-singular</dictionary>
                                 </dimension>
                                 <dimension>
-                                    <key>ThirdPlural</key>
-                                    <class>MatchingRegularExpressionsFromDictionary</class>
+                                    <key>third-person-plural</key>
+                                    <description>Personal pronouns, third person, plural</description>
+                                    <class>PercentageWordsCapturedFromDictionary</class>
                                     <dictionary>personal-pronouns-third-person-plural</dictionary>
                                 </dimension>
                             </dimensions>
@@ -132,299 +147,347 @@
                 </dimension>
                 <dimension>
                     <key>impersonal</key>
+                    <description>Impersonal pronouns</description>
                     <class>MatchingRegularExpressionsFromDictionary</class>
                     <dictionary>impersonal-pronouns</dictionary>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
+        <!-- Articles -->
         <dimension>
             <key>articles</key>
+            <description>Grammar statistics</description>
             <dimensions>
                 <dimension>
                     <key>prepositions</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of prepositions</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>verbs-auxiliary</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of auxiliary verbs</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>adverbs</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of adverbs</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>conjunctions</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of conjunctions</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>negation</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of negation statements</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <dimension>
-            <key>Grammar</key>
+            <key>grammar</key>
             <dimensions>
                 <dimension>
                     <key>adjectives</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of adjectives</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>comparatives</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of comparatives</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>interrogatives</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of interrogatives</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>numbers</key>
+                    <description>Total numbers identified</description>
                     <class>NumbersDimension</class>
                 </dimension>
                 
                 <dimension>
-                    <key>quant</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <key>quantitative</key>
+                    <description>Percentage of quantitative</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Affect -->
         <dimension>
-            <key>Affect</key>
+            <key>affect</key>
+            <description>Positive and negative emotions</description>
+            
             <dimensions>
                 <dimension>
                     <key>positive</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <description>Percentage of positive emotions</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
+                
                 <dimension>
                     <key>negative</key>
+                    <description>Percentage of negative emotions</description>
                     <dimensions>
                         <dimension>
                             <key>anxiety</key>
-                            <class>MatchingRegularExpressionsFromDictionary</class>
+                            <description>Percentage of words related with anxiety</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
                         </dimension>
                         <dimension>
                             <key>anger</key>
-                            <class>MatchingRegularExpressionsFromDictionary</class>
+                            <description>Percentage of words related with anger</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
                         </dimension>
                         <dimension>
                             <key>sad</key>
-                            <class>MatchingRegularExpressionsFromDictionary</class>
+                            <description>Percentage of words related with sadness</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
                         </dimension>
                     </dimensions>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Social -->
         <dimension>
-            <key>Social</key>
+            <key>social</key>
+            <description>Percentage of words related with society</description>
             <dimensions>
                 <dimension>
                     <key>family</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>female</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>male</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>friendship</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Cognitive -->
         <dimension>
             <key>cognitive</key>
             <dimensions>
                 <dimension>
                     <key>insight</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>cause</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>discrepancies</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>tentativeness</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>certainty</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>differ</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Perpetual -->
         <dimension>
             <key>perpetual</key>
             <dimensions>
                 <dimension>
                     <key>feel</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>hear</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>see</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Biological -->
         <dimension>
             <key>bio</key>
             <dimensions>
                 <dimension>
                     <key>body</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>health</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>ingesting</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>sex</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Biological -->
         <dimension>
             <key>time</key>
             <dimensions>
                 <dimension>
                     <key>focuspast</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>focuspresent</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>focusfuture</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Relatitivy -->
         <dimension>
             <key>relativity</key>
             <dimensions>
                 <dimension>
                     <key>motion</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>space</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>time</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Personal -->
         <dimension>
             <key>personal</key>
             <dimensions>
                 <dimension>
                     <key>death</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>home</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>pleasure</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>money</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>religion</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>work</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Informal speech -->
         <dimension>
             <key>informal</key>
             <dimensions>
                 <dimension>
                     <key>assent</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>fillers</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>netspeak</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>nonfluencies</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>swear</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Core principles -->
         <dimension>
             <key>core</key>
             <dimensions>
                 <dimension>
                     <key>affiliation</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>achievement</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>power</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>reward</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
                     <key>risk</key>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
             </dimensions>
         </dimension>
+        
+        
         <!-- Punctuation -->
         <dimension>
             <key>punctuation</key>
@@ -479,11 +542,11 @@
                     <class>CharacterCountDimension</class>
                     <character>()</character>
                 </dimension>
-
                 <dimension>
                     <key>emoticons</key>
                     <class>EmoticonsDimension</class>
                 </dimension>
+                
             </dimensions>
         </dimension>
     </dimensions>
