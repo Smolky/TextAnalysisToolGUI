@@ -72,6 +72,7 @@ fieldset {
     padding: 0;
 }
 
+
 /*
  * Allow only vertical resizing of textareas.
  */
@@ -80,26 +81,9 @@ textarea {
     resize: vertical;
 }
 
-/* ==========================================================================
-   Browser Upgrade Prompt
-   ========================================================================== */
-
-.browserupgrade {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
+table a {
+    color: inherit;
 }
-
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-  
-main {
-    margin: 0 auto;
-    padding-left: 20rem;
-}
-
 
 .filter-wrapper {
     position: fixed;
@@ -108,9 +92,10 @@ main {
     bottom: 0;
     left: 0;
     width: 20rem;
-    border-right: 1px solid black;
-    padding: 1rem;
-    background-color: #a71930;
+}
+
+.filter-wrapper {
+    color: white;
 }
 
 .filter-wrapper .stats,
@@ -119,8 +104,14 @@ main {
 .filter-wrapper label,
 .filter-wrapper p,
 .filter-wrapper li {
-    color: white;
+    color: inherit;
+} 
+
+.filter-wrapper {
+    padding: 1rem;
+    background-color: #a71930;
 }
+
 
 h1 {
     margin: 0 0 1rem 0;
@@ -153,42 +144,80 @@ th {
    color: white;
 }
 
-.toggle-button {
-    background: transparent;
-    border: 0;
-    line-height: 0;
-    vertical-align: middle;
-    padding: 0;
-    font-size: 0;
+.th-composite.th-deep-level a,
+.th-composite.th-deep-level span {
+    color: inherit;
+    text-decoration: none;
 }
 
-.toggle-button:before {
-    content: "";
-    width: 0; 
-    height: 0; 
-    border-top: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid white;
-    border-left: 5px solid transparent;
+.toggle-button.is-toggled .fa:before {
+    content: "\f106";
 }
 
-.toggle-button.is-toggled:before {
-    border-top: 5px solid white;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 5px solid transparent;
+.table {
+    width: auto;
 }
 
 td {
     font-family: monospace;
 }
 
+
+main:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 20rem;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0);
+    
+    -webkit-transition: background-color .3s ease-out;
+    transition: background-color .3s ease-out;
+
+}
+
+.loading-state {
+    overflow: hidden;
+}
+
+.loading-state table {
+    pointer-events: none;
+}
+
+.loading-state main:before {
+    opacity: 1;
+    z-index: 5;
+    background-color: rgba(0,0,0,.7);
+}
+
+.nav-tabs>li>a {
+    color: white;
+}
+
+.tab-content>.active {
+    padding: 1rem;
+    background: white;
+    color: #333;
+    margin: 0 0 2rem 0;
+}
+
+.nav-tabs>li>a:hover {
+    color: #a71930;
+}
+
 .table-hover>tbody>tr:hover,
 .table-hover>tbody>tr:hover > th,
 .table-hover>tbody>tr:hover > td {
-    background-color: #333;
+    background-color: #337ab7;
     color: white;
 }
+
+.table-hover>tbody>tr:hover th {
+    color: #fff;
+}
+
 
 .table-hover>tbody>tr > td:hover {
     background-color: #a71930;
@@ -240,6 +269,10 @@ table tbody td {
     bottom: 0px;
     background-color:#fff;
     width:70%
+}
+
+.filter-button {
+    display: none;
 }
 
 
@@ -319,21 +352,69 @@ table tbody td {
 }
 
 /* ==========================================================================
-   EXAMPLE Media Queries for Responsive Design.
-   These examples override the primary ('mobile first') styles.
-   Modify as content requires.
+   Author's custom styles
    ========================================================================== */
 
-@media only screen and (min-width: 35em) {
-    /* Style adjustments for viewports that meet the condition */
+/* Large desktops and laptops */
+@media (min-width: 1200px) {
+
+    body, html, main {
+        height: 100%;
+    }
+
+    main {
+        margin: 0 auto;
+        padding-left: 20rem;
+    }
 }
 
-@media print,
-       (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 1.25dppx),
-       (min-resolution: 120dpi) {
-    /* Style adjustments for high resolution devices */
+/* Portrait phones and smaller */
+@media (max-width: 480px) {
+
+    main {
+        position: relative;
+    }
+    
+    table {
+        display: block;
+        position: absolute;
+        left: 0;
+        width: 100%;
+    }
+
+    .filter-button {
+        display: initial;
+    }
+
+    .filter-wrapper {
+        left: -100%;
+        
+        -webkit-transition: left .3s ease-out;
+                transition: left .3s ease-out;
+        
+    }
+    
+    body.state-toggled .filter-wrapper {
+        left: 0;
+    }
+    
+    .filter-button {
+        position: fixed;
+        z-index: 10;
+        top: 1rem;
+        right: 1rem;
+        border: none;
+        width: 2rem;
+        height: 2rem;
+        line-height: 1;
+        background: white;
+        padding: .5rem;
+        border-radius: 100%;
+        border: 1px solid #ccc;
+    }
+    
 }
+
 
 /* ==========================================================================
    Print styles.
@@ -342,6 +423,16 @@ table tbody td {
    ========================================================================== */
 
 @media print {
+
+    @page {
+        size: landscape
+    }
+
+    .filter-wrapper {
+        display: none;
+    }
+
+    
     *,
     *:before,
     *:after,
@@ -359,9 +450,6 @@ table tbody td {
         text-decoration: underline;
     }
 
-    a[href]:after {
-        content: " (" attr(href) ")";
-    }
 
     abbr[title]:after {
         content: " (" attr(title) ")";

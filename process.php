@@ -54,6 +54,13 @@ $xml_config = simplexml_load_string ($raw_config);
 $dimensions = $xml_config->dimensions->dimension;
 $linear_dimensions = array ();
 
+
+// Configuration
+if (isset ($_POST['configuration'])) {
+    file_put_contents ('assets/configuration/temp.xml', $_POST['configuration']);
+    $dictionary = 'assets/configuration/temp.xml';
+}
+
     
 /**
  * build_linear_dimensions
@@ -143,34 +150,57 @@ array_map ('unlink', glob("tweets/*"));
 
 
 // Uploading files
-if (isset ($_FILES) && isset ($_FILES[0]) && ! isset ($_FILES[0]['error']) ) {
+if (isset ($_POST['file'])) {
     
-    $file = reset ($_FILES);
     
-    switch ($file['type']) {
+    // Get file
+    $file = base64_decode ($_POST['file']);
+    
+    
+    // Get mime type
+    $f = finfo_open();
+    $mime_type = finfo_buffer ($f, $file, FILEINFO_MIME_TYPE);
+    
+    
+    // According to the mime type
+    switch ($mime_type) {
+        
+        // Text files
         default:
         case 'text/plain':
-            file_put_contents ('tweets/000.txt', file_get_contents ($file['tmp_name']));
+            file_put_contents ('tweets/000.txt', $file);
             break;
-            
+        
+        
+        // Zips
         case 'application/octet-stream':
+        
+            $file = base64_decode (str_replace ('data:;base64,', '', $_POST['file']));
+            $temp_file = tmpfile ();
+            fwrite ($temp_file, $file);
+            $temp_file_url = stream_get_meta_data ($temp_file);
+            $temp_file_url = $temp_file_url['uri'];
+            
             $zip = new \ZipArchive;
-            $res = $zip->open ($file['tmp_name']);
+            $res = $zip->open ($temp_file_url);
+            
+            echo $res;
+            echo ' ' . ZipArchive::ER_NOZIP;
             
             if (true === $res) {
+                echo 'test';
                 $zip->extractTo ('tweets');
                 $zip->close();
             }
             break;
     }
-    
 
 
 // Store results
-} elseif ($_POST['query']) {
+} elseif (isset ($_POST['query']) && ! empty ($_POST['query'])) {
     store_tweets ($_POST['query']);
     
-} elseif ($_POST['content']) {
+} elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
     file_put_contents ('tweets/000.txt', $_POST['content']);
 
 }
@@ -185,9 +215,7 @@ $now = microtime (true);
 header ('Content-Type: text/html; charset=utf-8');
 
 
-?>            
-                    
-<?php foreach ($output as $index => $line) : ?>
+foreach ($output as $index => $line) : ?>
     
     <?php if ($index == 0) : ?>
         <?php continue ?>
@@ -215,7 +243,7 @@ header ('Content-Type: text/html; charset=utf-8');
                 <?php continue ?>
             <?php endif ?>
             <td>
-                <span><?= is_numeric ($output) ? number_format ($output, 2) : $output ?></span>
+                <span><?= is_numeric ($output) ? number_format ($output, 2, ".", "") : $output ?></span>
             </td>
         <?php endforeach ?>
 

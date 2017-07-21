@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <directory_folder>assets/dictionaries/es/</directory_folder>
+    
+    
+    <!-- Configuration -->
+    <dimensions>
+        
+        <!-- Word count -->
+        <dimension>
+            <key>wc</key>
+            <class>WordCountDimension</class>
+            <description>Counts how many words there are in the text</description>
+        </dimension>
+
+    </dimensions>
+</configuration>
