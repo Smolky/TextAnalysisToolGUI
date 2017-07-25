@@ -82,64 +82,128 @@ foreach ($dimensions as $dimension) {
 /**
  * store_tweets
  *
+ * @link https://dev.twitter.com/rest/reference/get/search/tweets
+ *
  * @package UMUTextStats Sample
  */
-function store_tweets ($query) {
+function store_tweets ($query, $max_results = null) {
 
     // Global
     global $tweets;
     global $tweets_links;
-
+    
+    
+    // Max ID will store the last tweet for pagination
+    $max_id = null;
+    $tweet_index = 0;
+    
     
     // Connect
     $connection = new TwitterOAuth (TWITTER_KEY, TWITTER_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET);
-    $content = $connection->get("account/verify_credentials");
-
-    
-    // Fetch data
-    $responses = $connection->get("search/tweets", [
-        "count" => 10, 
-        "q" => $query,
-        "lang" => "es",
-        "result_type" => "recent",
-        "include_entities" => false
-    ]);
+    $content = $connection->get ("account/verify_credentials");
     
     
-    // Fetch information
-    foreach ($responses->statuses as $index => $tweet) {
+    // Get max results
+    while (true) {
     
-        // Get text
-        $tweet_text = $tweet->text;
+        // Fetch data
+        $response = $connection->get ("search/tweets", [
+            "count" => 100, 
+            "q" => $query,
+            "lang" => "es",
+            "result_type" => "recent",
+            "include_entities" => false,
+            "max_id" => $max_id
+        ]);
         
         
-        // Parse string to remove initial junky words
-        // like "RT" or the mentions to other persons
-        $tweet_text = trim (preg_replace ('/^RT/i', '', $tweet_text));
-        $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
-        $encoding = mb_detect_encoding ($tweet_text, "auto", false);
-        
-        
-        // Store tweets
-        $tweets[] = $tweet_text;
-        
-        
-        // Store links (in the same order)
-        $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->id;
-        
-        
-        // Get file name
-        $filename = 'tweets/' . str_pad ($index, 3, "0", STR_PAD_LEFT) . '.txt';
-        
-        
-        // Store content
-        if ($encoding === 'UTF-8') {
-            file_put_contents ($filename, $tweet_text);
-            
-        } else {
-            file_put_contents ($filename, mb_convert_encoding ($tweet_text, 'UTF-8'));
-            
+        // No results
+        // @link https://dev.twitter.com/rest/public/rate-limiting
+        if ( ! $response || isset ($response->error)) {
+            header ('HTTP/1.1 503 Service Temporarily Unavailable');
+            header ('Status: 503 Service Temporarily Unavailable');
+            break;
         }
+        
+        
+        // restart number of results
+        $num_results_in_this_iteration = 0;
+        
+        
+        // Fetch information
+        foreach ($response->statuses as $index => $tweet) {
+        
+            // Get text
+            $tweet_text = $tweet->text;
+            
+            
+            // Parse string to remove initial junky words
+            // like "RT" or the mentions to other persons
+            $tweet_text = trim (preg_replace ('/^RT/i', '', $tweet_text));
+            $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
+            $encoding = mb_detect_encoding ($tweet_text, "auto", false);
+            
+            
+            if ( ! $tweet_text) {
+                continue;
+            }
+            
+            
+            // Get last max id
+            $max_id = $tweet->id_str;
+            
+            
+            // Store already in the set
+            if (isset ($tweets[$max_id])) {
+                continue;
+            }
+            
+            
+            // Advance
+            $tweet_index++;
+            $num_results_in_this_iteration++;
+            
+            
+            // Store tweets
+            $tweets[$max_id] = $tweet_text;
+            
+            
+            
+            // Store links (in the same order)
+            $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->id;
+            
+            
+            // Get file name
+            $filename = 'tweets/' . str_pad ($tweet_index, 6, "0", STR_PAD_LEFT) . '.txt';
+            
+            
+            // Store content
+            if ($encoding === 'UTF-8') {
+                file_put_contents ($filename, $tweet_text);
+                
+            } else {
+                file_put_contents ($filename, mb_convert_encoding ($tweet_text, 'UTF-8'));
+                
+            }
+            
+            
+            // When to exist? I've got everything i want
+            if (count ($tweets) >= $max_results) {
+                break 2;
+            }
+        }
+        
+        
+        // Failure
+        if ( ! $num_results_in_this_iteration) {
+            break;
+        }
+        
+        
+        // Give a break
+        usleep (.5 * 1000000);
+        
+        
     }
 }
 
@@ -198,7 +262,7 @@ if (isset ($_POST['file'])) {
 
 // Store results
 } elseif (isset ($_POST['query']) && ! empty ($_POST['query'])) {
-    store_tweets ($_POST['query']);
+    store_tweets ($_POST['query'], $_POST['max'] ?? null);
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
     file_put_contents ('tweets/000.txt', $_POST['content']);

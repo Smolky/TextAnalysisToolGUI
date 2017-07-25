@@ -82,7 +82,15 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="twitter-tab">
                             <div class="form-group">
-                                <label for="query">Twitter query string</label>
+                                <label for="query">
+                                    Twitter query string
+                                    <small>
+                                        <a href="https://dev.twitter.com/rest/public/search" target="_blank">
+                                            Tips
+                                        </a>
+                                     </small>
+                                </label>
+                                
                                 <input 
                                     autofocus
                                     type="text" 
@@ -91,6 +99,16 @@
                                     placeholder="Cadena de búsqueda para tweets" 
                                     value="<?= htmlspecialchars ($_POST['query'] ?? '') ?>" 
                                 />
+                                
+                                <input 
+                                    style="margin: .75rem 0; max-width: 6rem;"
+                                    class="form-control" 
+                                    maxlength="6" 
+                                    type="number" 
+                                    name="twitter-max-results" 
+                                    value="255" /> 
+
+                                
                             </div>
                         </div>
                         

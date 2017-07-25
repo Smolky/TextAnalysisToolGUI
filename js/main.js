@@ -27,17 +27,15 @@ $(document).ready (function () {
     });
     
     
+    // Dictionary
     $('[name="dictionary"]').change (function (e) {
         var self = $(this);
         var dictionary = self.find ('option:selected').attr ('value');
-        
-        console.log (dictionary);
-        
         configuration.prop ('disabled', dictionary != "");
-        
     });
     
     
+    // Update config
     $('.update-config-action').click (function (e) {
         $.ajax ({
             method: 'POST',
@@ -81,19 +79,7 @@ $(document).ready (function () {
         });
     });
     
-    
-    /*
-    var backup;
-    $('#config')
-        .on ('hidden.bs.modal', function (e) {
 
-        })
-        .on ('show.bs.modal', function (e) {
-            
-        })
-    ;
-    */
-    
     
     // Handle submit
     form.submit (function (e) {
@@ -142,6 +128,7 @@ $(document).ready (function () {
         };
         
         if ($(".twitter-tab-wrapper").hasClass ('active')) {
+            data.max = form.find ('[name="twitter-max-results"]').val ();
             data.query = form.find ('[name="query"]').val ();
             send_request (data);
         }
