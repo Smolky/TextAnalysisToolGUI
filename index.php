@@ -7,23 +7,18 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link href="favicon.ico" rel="Shortcut Icon">
+        <link href="apple-touch-icon.png" rel="apple-touch-icon">
+        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/main.css?v=<?= rand (1, 1000) ?>">
-        <style>
-            <?php foreach ($linear_dimensions as $index => $dimension) : ?>
-                <?php if (isset ($dimension->class) && $dimension->class == 'PercentageWordsCapturedFromDictionary') : ?>
-            table tbody td:nth-child(<?= $index + 2 ?>) span:after {
-                content: "%";
-                font-size: .7em;
-                opacity: .7;
-            }
-                <?php endif ?>
-            <?php endforeach ?> 
-        </style>
         
-        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <link rel="stylesheet" href="css/vendor/vex.css">
+        <link rel="stylesheet" href="css/vendor/vex-theme-plain.css">
+        <link rel="stylesheet" href="css/main.css?v=<?= rand (1, 1000) ?>">
+        
+        <style id="toggled-columns"></style>
+
     </head>
     <body>
     
@@ -106,7 +101,7 @@
                                     maxlength="6" 
                                     type="number" 
                                     name="twitter-max-results" 
-                                    value="255" /> 
+                                    value="10" /> 
 
                                 
                             </div>
@@ -147,10 +142,15 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
                             Send
-                        </button>
+                        </button><br /><br />
                         
                         <button type="button" class="btn btn-default export-csv-action">
                             Export to CSV
+                            <span class="fa fa-download"></span>
+                        </button>
+                        
+                        <button type="button" class="btn btn-default export-arff-action">
+                            Export to ARFF
                             <span class="fa fa-download"></span>
                         </button>
                         
@@ -188,7 +188,7 @@
                     
                         <!-- Select dictionary -->
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-12">
                             
                                 <div class="form-group">
                                     <label for="dictionary">
@@ -215,10 +215,18 @@
                                     </select>
                                 </div>
                             </div>
-                                
-                            <div class="col-md-8">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
                             
-                                <textarea name="configuration" class="form-control"><?= $raw_config ?></textarea>
+                                <textarea 
+                                    spellcheck="false"
+                                    autocapitalize="off"
+                                    autocorrect="off"
+                                    rows="10"
+                                    name="configuration" 
+                                    class="form-control"><?= $raw_config ?></textarea>
                                 <br />
                                 
                                 <div style="text-align: right;">
@@ -231,9 +239,14 @@
                                         Save
                                     </button>
                                     
-                                    <button type="button" class="btn btn-default">
+                                    <label class="btn btn-default ">
+                                        <input 
+                                            class="hide load-config-action" 
+                                            type="file"
+                                            accept=".xml"
+                                        />
                                         Load
-                                    </button>                                    
+                                    </label>
                                     
                                 </div>
 
@@ -248,6 +261,9 @@
         
         <!-- Javascripts -->
         <script src="js/vendor/jquery-1.12.0.min.js"></script>
+        <script src="js/vendor/vex.combined.min.js"></script>
+        <script>vex.defaultOptions.className = 'vex-theme-plain'</script>
+        
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js?v=<?= rand (1, 1000) ?>"></script>

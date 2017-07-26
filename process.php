@@ -34,7 +34,6 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 // Keep track of the tweets
 $tweets = array ();
-$tweets_links = array ();
 
 
 // Load dictionary, Spanish by default
@@ -52,30 +51,12 @@ if (isset ($_POST['dictionary']) && 'en' == $_POST['dictionary']) {
 $raw_config = file_get_contents ($dictionary);
 $xml_config = simplexml_load_string ($raw_config);
 $dimensions = $xml_config->dimensions->dimension;
-$linear_dimensions = array ();
 
 
 // Configuration
 if (isset ($_POST['configuration'])) {
     file_put_contents ('assets/configuration/temp.xml', $_POST['configuration']);
     $dictionary = 'assets/configuration/temp.xml';
-}
-
-    
-/**
- * build_linear_dimensions
- *
- * @package UMUTextStats-GUI
- */
-function build_linear_dimensions ( & $linear_dimensions, $dimension) {
-    $linear_dimensions[] = $dimension;
-    if (isset ($dimension->dimensions)) foreach ($dimension->dimensions->dimension as $sub_dimension) {
-        build_linear_dimensions ($linear_dimensions, $sub_dimension);
-    }
-}
-
-foreach ($dimensions as $dimension) {
-    build_linear_dimensions ($linear_dimensions, $dimension);
 }
 
 
@@ -90,7 +71,6 @@ function store_tweets ($query, $max_results = null) {
 
     // Global
     global $tweets;
-    global $tweets_links;
     
     
     // Max ID will store the last tweet for pagination
@@ -165,12 +145,10 @@ function store_tweets ($query, $max_results = null) {
             
             
             // Store tweets
-            $tweets[$max_id] = $tweet_text;
-            
-            
-            
-            // Store links (in the same order)
-            $tweets_links[] = 'https://twitter.com/statuses/' . $tweet->id;
+            $tweets[$max_id] = [
+                'id' => $tweet->id,
+                'text' => $tweet_text
+            ];
             
             
             // Get file name
@@ -203,8 +181,13 @@ function store_tweets ($query, $max_results = null) {
         // Give a break
         usleep (.5 * 1000000);
         
-        
     }
+    
+    
+    // Remove keys, there are no necessary
+    $tweets = array_values ($tweets);
+
+    
 }
 
 
@@ -263,6 +246,7 @@ if (isset ($_POST['file'])) {
 // Store results
 } elseif (isset ($_POST['query']) && ! empty ($_POST['query'])) {
     store_tweets ($_POST['query'], $_POST['max'] ?? null);
+
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
     file_put_contents ('tweets/000.txt', $_POST['content']);
@@ -275,9 +259,9 @@ $then = microtime (true);
 exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s tweets -c " . $dictionary . " -f %s,", $output); 
 $now = microtime (true);
 
-// Header
-header ('Content-Type: text/html; charset=utf-8');
 
+// Capture output. <th> and <td> are intentionally unclosed
+ob_start();
 
 foreach ($output as $index => $line) : ?>
     
@@ -289,18 +273,17 @@ foreach ($output as $index => $line) : ?>
         <th>
             <?= $index == 0 ? '&nbsp;' : '' ?>
             <?php if ($index != 0) : ?>
-            
-                <?php if (isset ($tweets_links[$index - 1])) : ?>
-                <a href="<?= $tweets_links[$index - 1] ?? null ?>" target="_blank">
+                <?php if (isset ($tweets[$index - 1])) : ?>
+                <a href="https://twitter.com/statuses/<?= $tweets[$index - 1]['id'] ?? null ?>" target="_blank">
                 <?php endif ?>
-                    <strong title="<?= $index ?>. <?= isset ($tweets[$index - 1]) ? htmlentities (str_replace ("\n", "", $tweets[$index - 1])) : "" ?>">
+                    <strong title="<?= $index ?>. <?= isset ($tweets[$index - 1]) ? htmlentities (str_replace ("\n", "", $tweets[$index - 1]['text'])) : "" ?>">
                         <?= str_pad ($index, 6, " ") ?>
                     </strong>
-                <?php if (isset ($tweets_links[$index - 1])) : ?>
+                <?php if (isset ($tweets[$index - 1])) : ?>
                 </a>
                 <?php endif ?>
             <?php endif ?>
-        </th>
+        
 
         <?php foreach (explode (',', $line) as $dimension_index => $output) : ?>
             <?php if ( ! $output) : ?>
@@ -308,9 +291,20 @@ foreach ($output as $index => $line) : ?>
             <?php endif ?>
             <td>
                 <span><?= is_numeric ($output) ? number_format ($output, 2, ".", "") : $output ?></span>
-            </td>
+            
         <?php endforeach ?>
-
     </tr>
+<?php endforeach ;
 
-<?php endforeach ?>
+
+// Get output
+$html = ob_get_clean ();
+
+
+// Minimize
+$html = preg_replace (['/ {2,}/', '/<!--.*?-->|\t|(?:\r?\n[ \t]*)+/s'], [' ', ''], $html);
+
+
+// Header
+header ('Content-Type: text/html; charset=utf-8');
+echo $html;

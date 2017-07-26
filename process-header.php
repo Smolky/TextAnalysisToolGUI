@@ -60,7 +60,7 @@ foreach ($dimensions as $dimension) {
  *
  * @package UMUTextStats-GUI
  */
-function print_table_header_cell ($dimension, $level = 0) {
+function print_table_header_cell ($dimension, $parent_dimension_key='', $level = 0) {
     
     // Init vars
     $key = trim ($dimension->key);
@@ -83,7 +83,13 @@ function print_table_header_cell ($dimension, $level = 0) {
     $title .= $description;
 
     ?>
-    <th data-level="<?= $level ?>" class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level">
+    <th 
+        data-key="<?= $dimension->key ?>" 
+        data-key-full="<?= $parent_dimension_key ?><?= $dimension->key ?>"
+        data-toggled="false"
+        data-level="<?= $level ?>" 
+        class="<?= $is_composite ? "th-composite" : "" ?> th-deep-level"
+    >
         
         <?php if ($has_dimensions) : ?>
             <a href="javascript:0" class="toggle-button toggle-cols-action">
@@ -109,13 +115,34 @@ function print_table_header_cell ($dimension, $level = 0) {
     <?php
     if ($is_composite) {
         foreach ($dimension->dimensions->dimension as $sub_dimension) {
-            print_table_header_cell ($sub_dimension, $level + 1);
+            print_table_header_cell ($sub_dimension, $parent_dimension_key . $dimension->key . '|', $level + 1);
         }
     }
 }
 
 
-?><table class="table table-bordered table-hover table-striped table-responsive ">
+// Get style columns index
+$column_indexes = [];
+foreach ($linear_dimensions as $index => $dimension) {
+    if (isset ($dimension->class) && 'PercentageWordsCapturedFromDictionary' == $dimension->class) {
+        $column_indexes[] = $index + 2;
+    }
+}
+
+if ($column_indexes) {
+?><style id="inline-style-sheet">
+    <?php foreach ($column_indexes as $index => $dimension_index) : ?>
+        table tbody td:nth-child(<?= $dimension_index ?>) span:after<?= (count ($column_indexes) - 1) != $index ? ',' : '' ?>
+    <?php endforeach ?> {
+        content: "%";
+        font-size: .7em;
+        opacity: .7;
+    }
+    
+</style>
+<?php } ?>
+
+<table class="table table-bordered table-hover table-striped table-responsive ">
 
     <colgroup>
         <col span="1" style="background-color: #eee">
