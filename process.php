@@ -37,14 +37,7 @@ $tweets = array ();
 
 
 // Load dictionary, Spanish by default
-if (isset ($_POST['dictionary']) && 'en' == $_POST['dictionary']) {
-    $dictionary = 'assets/configuration/english.xml';
-
-    
-} else {
-    $dictionary = 'assets/configuration/spanish.xml';
-    
-}
+$dictionary = 'assets/configuration/spanish.xml';
 
 
 // Collect dimensions
@@ -59,6 +52,129 @@ if (isset ($_POST['configuration'])) {
     $dictionary = 'assets/configuration/temp.xml';
 }
 
+if (isset ($_POST['configuration_file'])) {
+    $dictionary = 'assets/configuration/' . $_POST['configuration_file'] . '.xml';
+}
+
+
+// Argot
+// @link http://www.netlingo.com/word/international-online-jargon.php
+$argot = [
+    '100pre' => 'siempre', 
+    'a10' => 'adiós', 
+    'a2' => 'adiós', 
+    'aki' => 'aquí', 
+    'amr' => 'amor', 
+    'aora' => 'ahora', 
+    'asdc' => 'al salir de clase', 
+    'asias' => 'gracias',
+    'b' => 'bien',
+    'bb' => 'bebé',
+    'bbr' => 'bbr',
+    'bs, bss' => 'besos',
+    'bye' => 'adiós',
+    'b7s' => 'besitos',
+    'c' => 'sé, se',
+    'cam' => 'cámara',
+    'chao, chau',
+    'd' => 'de',
+    'd2' => 'dedos',
+    'dcr' => 'decir',
+    'dew, dw' => 'adiós',
+    'dfcl' => 'difícil',
+    'dim' => 'dime',
+    'dnd' => 'dónde',
+    'exo' => 'hecho',
+    'ems' => 'hemos',
+    'ers' => 'eres tú',
+    'ers2' => 'eres tú',
+    'eys' => 'ellos',
+    'grrr' => 'enfadado',
+    'finde' => 'fin de semana',
+    'fsta' => 'fiesta',
+    'hl' => 'hasta luego',
+    'hla' => 'hola',
+    'iwal' => 'igual',
+    'k' => 'que, qué',
+    'kbza' => 'cabeza',
+    'kls' => 'clase',
+    'kntm' => 'cuéntame',
+    'kyat' => 'cállate', 
+    'KO' => 'estoy muerto',
+    'km' => 'como',
+    'm1ml' => 'mándame un mensaje luego',
+    'msj' => 'msnsaje',
+    'mxo' => 'mucho',
+    'nph' => 'no puedo hablar',
+    'npn' => 'no pasa nada',
+    'pa' => 'para, padre',
+    'pco' => 'poco',
+    'pdt' => 'piérdete',
+    'pf' => 'por favor',
+    'pls' => 'por favor',
+    'pq' => 'porque, porqué',
+    'q' => 'que, qu.a',
+    'q acs?' => '¿Qué haces?',
+    'qand, qando' => 'cuando, cuándo',
+    'qdms' => 'quedamos',
+    'q plomo!' => '¡Qué plomo!',
+    'q qrs?' => '¿Qué quieres?',
+    'q risa!' => '¡Qué risa!',
+    'q sea' => 'qué sea',
+    'q tal?' => 'qué tal',
+    'sbs?' => '¿sabes?',
+    'salu2' => 'saludos',
+    'sms' => 'mensaje',
+    'spro' => 'espero',
+    'tq' => 'te quiero',
+    'tqi' => 'tengo que irme',
+    'tas OK?' => '¿Estás bien?',
+    'tb' => 'también',
+    'uni' => 'universidad',
+    'vns?' => '¿Vienes?',
+    'vos' => 'vosotros',
+    'wpa' => '¡Guapa!',
+    'xdon' => 'perdón',
+    'xfa' => 'por favor',
+    'xo' => 'pero',
+    'xq' => 'porque, porqué',
+    'ymam, ymm',
+    'zzz+' => 'dormir'
+];
+
+
+// Configure corrector
+$pspell_link = pspell_new ("es", "", "", "", (PSPELL_FAST | PSPELL_RUN_TOGETHER));
+
+
+/**
+ * spell_check
+ *
+ * @package UMUTextStats
+ */
+function spell_check ($text) {
+    
+    global $pspell_link;
+    
+    
+    return preg_replace_callback ('/\b\w+\b/i', function ($matches) use ($pspell_link) {
+        
+        if ( ! pspell_check ($pspell_link, reset ($matches))) {
+            
+            $suggestions = pspell_suggest ($pspell_link, reset ($matches));
+            if ($suggestions) {
+                return reset ($suggestions);
+            }
+            
+        }
+
+        
+        return reset ($matches);
+    
+    }, $text);
+}
+
+
 
 /**
  * store_tweets
@@ -71,6 +187,7 @@ function store_tweets ($query, $max_results = null) {
 
     // Global
     global $tweets;
+    global $argot;
     
     
     // Max ID will store the last tweet for pagination
@@ -117,13 +234,47 @@ function store_tweets ($query, $max_results = null) {
             $tweet_text = $tweet->text;
             
             
+            // Filtering retweets
+            if (0 === strpos ($tweet_text, "RT")) {
+                continue;
+            }
+            
+            
+            // Delete mentions and replies to other users´ tweets, which are
+            // represented by means of strings starting with @
+            // @link Automatic detection of satire in Twitter: A psycholinguistic-based approach
+            if (0 === strpos ($tweet_text, "@")) {
+                continue;
+            }
+            
+            
+            // Remove URLs
+            if (0 === strpos ($tweet_text, "http")) {
+                continue;
+            }
+            
+            
+            // The “#” character is removed from all hashtags because often, only the 
+            // remainder of the string forms a legible word that contributes
+            // to a better understanding of the tweet [29].
+            // @link Automatic detection of satire in Twitter: A psycholinguistic-based approach
+            $tweet_text = str_replace ('#', '', $tweet_text);
+            
+            
             // Parse string to remove initial junky words
-            // like "RT" or the mentions to other persons
-            $tweet_text = trim (preg_replace ('/^RT/i', '', $tweet_text));
             $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
+            
+            
+            // Fixing argot
+            foreach ($argot as $word => $replacement) {
+                $tweet_text = preg_replace ('/\b' . $word . '\b/i', $replacement, $tweet_text);
+            }
+            
+            
             $encoding = mb_detect_encoding ($tweet_text, "auto", false);
             
             
+            // @todo Apply filters
             if ( ! $tweet_text) {
                 continue;
             }
@@ -133,10 +284,34 @@ function store_tweets ($query, $max_results = null) {
             $max_id = $tweet->id_str;
             
             
-            // Store already in the set
+            // Filtering duplicates by ID
             if (isset ($tweets[$max_id])) {
                 continue;
             }
+            
+            
+            // Filtering duplicates by text
+            if (in_array ($tweet_text, $tweets)) {
+                continue;
+            }
+            
+            
+            // Autocorrect
+            $tweet_text = preg_replace_callback ('/\b\w+\b/', function ($matches) use ($pspell_link) {
+            
+                print_r ($matches);
+            
+                // 
+                $suggestions = pspell_suggest ($pspell_link, reset ($matches));
+                
+                if ($suggestions) {
+                    return reset ($suggestions);
+                }
+                
+                return reset ($matches);
+            
+            }, $tweet_text);
+            
             
             
             // Advance
@@ -152,7 +327,7 @@ function store_tweets ($query, $max_results = null) {
             
             
             // Get file name
-            $filename = 'tweets/' . str_pad ($tweet_index, 6, "0", STR_PAD_LEFT) . '.txt';
+            $filename = 'temp/' . str_pad ($tweet_index, 6, "0", STR_PAD_LEFT) . '.txt';
             
             
             // Store content
@@ -187,13 +362,11 @@ function store_tweets ($query, $max_results = null) {
     // Remove keys, there are no necessary
     $tweets = array_values ($tweets);
 
-    
 }
 
 
-    
 // Remove files
-array_map ('unlink', glob("tweets/*"));
+array_map ('unlink', glob ("temp/*"));
 
 
 // Uploading files
@@ -215,7 +388,7 @@ if (isset ($_POST['file'])) {
         // Text files
         default:
         case 'text/plain':
-            file_put_contents ('tweets/000.txt', $file);
+            file_put_contents ('temp/000.txt', $file);
             break;
         
         
@@ -236,7 +409,7 @@ if (isset ($_POST['file'])) {
             
             if (true === $res) {
                 echo 'test';
-                $zip->extractTo ('tweets');
+                $zip->extractTo ('temp');
                 $zip->close();
             }
             break;
@@ -249,15 +422,20 @@ if (isset ($_POST['file'])) {
 
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
-    file_put_contents ('tweets/000.txt', $_POST['content']);
+    file_put_contents ('temp/000.txt', spell_check ($_POST['content']));
 
 }
 
 
 // Parse
 $then = microtime (true);
-exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s tweets -c " . $dictionary . " -f %s,", $output); 
+exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s temp -c " . $dictionary . " -f %s,", $output); 
 $now = microtime (true);
+
+
+// Remove files
+array_map ('unlink', glob ("temp/*"));
+
 
 
 // Capture output. <th> and <td> are intentionally unclosed

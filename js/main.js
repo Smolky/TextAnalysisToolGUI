@@ -23,15 +23,11 @@
 // Wait until DOM is ready
 $(document).ready (function () {
 
-    // Tabs
-    $('#tabs a').click(function (e) {
-      e.preventDefault()
-      $(this).tab('show')
-    })
-
-
-    // Get common DOM objects
+    // Current request is global, so we can allow to the user to cancel it
     var xhr;
+    
+    
+    // Get common DOM objects
     var body = $('body');
     var main = $('main');
     var form = $('form');
@@ -40,26 +36,39 @@ $(document).ready (function () {
     var table = $('table');
     var configuration = $('[name="configuration"]');
     var modal = $('.modal');
+    var columns_style = $('#toggled-columns');
+    
+    
+    // Init common vars
     var toggled_columns = new Array ();
     
     
-    // Remember last toggled columns
-    function toggle_columns () {
+    /**
+     * toggle_columns
+     *
+     * Remember last toggled columns
+     *
+     * @param columns
+     */
+    function toggle_columns (columns) {
         
-        // Toggle headers
+        // Init vars
         var style_css = '';
-        var style = $('#toggled-columns');
-        style.html ('');
         
         
-        $.each (toggled_columns, function (index, column_key) {
+        // Empty previous style
+        columns_style.html ('');
+        
+        
+        // toggled_columns is a global var
+        $.each (columns, function (index, column_key) {
             style_css += 'tr:first-child th[data-key-full^="' + column_key + '|"] { display: none; }';
         });
         
         
         // Toggle tds
         var indexes = [];
-        style.html (style_css);
+        columns_style.html (style_css);
         style_css = '';
         
         table.find ('tr:first-child th:hidden').each (function () {
@@ -71,9 +80,51 @@ $(document).ready (function () {
         });
         
         
-        style.append (style_css);
+        columns_style.append (style_css);
         
     }
+    
+    
+    /**
+     * fetch_data
+     *
+     * Fetches data to be used to export operations
+     *
+     * @param separator
+     */
+    var fetch_data = function (separator) {
+        
+        // Get headers
+        var headers = $("thead th span[data-toggle]", table).map (function () {
+            return $.trim (this.innerHTML);
+        }).get();
+        
+        
+        // Get rows
+        var rows = $("tbody > tr", table).map (function () { 
+            return [$("td span", this).map (function () { 
+                return $.trim (this.innerHTML);
+            }).get()];
+        }).get();
+        
+        
+        // Create CSV
+        var response = "";
+        response = response + headers.join (separator) + "\n";
+        $.each (rows, function (index, row) {
+            response = response + row.join (separator) + "\n";
+        });
+        
+        
+        return response;
+    }
+    
+    
+    // Allow tabs navigation
+    $('#tabs a').click(function (e) {
+      e.preventDefault ();
+      $(this).tab ('show');
+    })    
     
     
     // Toggle filter
@@ -100,26 +151,30 @@ $(document).ready (function () {
         
         
         // Get configuration
-        var config_string = configuration.val ();
+        var data = {};
+        if (modal.find ('[name="dictionary"]').val ()) {
+            data.configuration_file = modal.find ('[name="dictionary"]').val ();
+            
+        } else {
+            data.configuration = configuration.val ();
+        
+            // Store in local-storage
+            localStorage.setItem ('config', data.configuration);
+            
+        }
         
         
-        // Store in local-storage
-        localStorage.setItem ('config', config_string);
-    
-    
         // Perform AJAX Call
         $.ajax ({
             method: 'POST',
             url: 'process-header.php', 
             dataType: "html",
-            data: {
-                configuration: config_string
-            },
+            data: data,
             success: function (html) {
                 table.replaceWith (html);
                 table = $('table');
                 $('#config').modal ('hide');
-                toggle_columns ();
+                toggle_columns (toggled_columns);
             }
         });
     });
@@ -146,6 +201,7 @@ $(document).ready (function () {
         reader.readAsText (input.files[0]);
     
     });
+    
     
     // Download configuration
     $('.store-config-action').click (function (e) {
@@ -199,7 +255,6 @@ $(document).ready (function () {
         });
     });
     
-
     
     // Handle submit
     form.submit (function (e) {
@@ -242,25 +297,51 @@ $(document).ready (function () {
         }
         
         
-        // Fetch data
-        var data = {
-            configuration: configuration.val ()
-        };
+
+        // Prepare configuration
+        var data = {};
         
+        
+        if (modal.find ('[name="dictionary"]').val ()) {
+            data.configuration_file = modal.find ('[name="dictionary"]').val ();
+            
+        } else {
+            data.configuration = configuration.val ();
+        }
+        
+        
+        // Twitter
         if ($(".twitter-tab-wrapper").hasClass ('active')) {
             data.max = form.find ('[name="twitter-max-results"]').val ();
-            data.query = form.find ('[name="query"]').val ();
+            data.query = $.trim (form.find ('[name="query"]').val ());
+            
+            // Validate
+            if ( ! data.query) {
+                vex.dialog.alert ('Your query is empty');
+                body.removeClass ('loading-state');
+                body.removeClass ('state-toggled');
+                return;
+            }
+            
             send_request (data);
         }
         
         if ($(".text-tab-wrapper").hasClass ('active')) {
             data.content = form.find ('[name="content"]').val ();
+            
+            // Validate
+            if ( ! data.content) {
+                vex.dialog.alert ('Your query is empty');
+                body.removeClass ('loading-state');
+                body.removeClass ('state-toggled');
+                return;
+            }
+            
             send_request (data);
         }
         
         if ($(".file-tab-wrapper").hasClass ('active')) {
             if (field_file.files.length == 1) {
-            
                 var reader = new FileReader ();
                 reader.readAsDataURL (field_file.files[0]);
                 reader.onload = function () {
@@ -269,7 +350,14 @@ $(document).ready (function () {
                 
                 };
                 reader.onerror = function (error) {
+                    vex.dialog.alert ('The file cannot be loaded');
+                    body.removeClass ('loading-state');
+                    body.removeClass ('state-toggled');
                 };
+            } else {
+                vex.dialog.alert ('You need to attach one file');
+                body.removeClass ('loading-state');
+                body.removeClass ('state-toggled');
             }
         }
         
@@ -277,37 +365,10 @@ $(document).ready (function () {
         // Prevent submit returning false to allow only
         // Ajax validation
         return false;
+        
     });
 
-    
-    var fetch_data = function (separator) {
-        
-        // Get headers
-        var headers = $("thead th span[data-toggle]", table).map (function () {
-            return $.trim (this.innerHTML);
-        }).get();
-        
-        
-        // Get rows
-        var rows = $("tbody > tr", table).map (function () { 
-            return [$("td span", this).map (function () { 
-                return $.trim (this.innerHTML);
-            }).get()];
-        }).get();
 
-        
-        
-        // Create CSV
-        var response = "";
-        response = response + headers.join (separator) + "\n";
-        $.each (rows, function (index, row) {
-            response = response + row.join (separator) + "\n";
-        });
-        
-        
-        return response;
-    }
-    
     
     // Export to CSV
     $('.export-csv-action').click (function () {
@@ -317,6 +378,7 @@ $(document).ready (function () {
             message: 'Please, specify the file name',
             value: 'umutextstats.csv',
             callback: function (filename) {
+                
                 if ( ! filename) {
                     return;
                 }
@@ -329,7 +391,7 @@ $(document).ready (function () {
                 
                 
                 // Get file
-                csv = fetch_data (";");
+                content = fetch_data (";");
                 
                 
                 // Download file
@@ -374,7 +436,6 @@ $(document).ready (function () {
                 // Get file
                 content = fetch_data (",");
                 content = '@DATA\n' + content;
-
                 
                 
                 // Download file
@@ -391,15 +452,15 @@ $(document).ready (function () {
                         link.download = filename;
                         link.click ();
                     }
-                });                
-                
+                });
             }
         });
     
     });
     
     
-    // Toggle
+    // Toggle action. Bind to document to avoid reattach
+    // events when DOM is updated
     $(document).on ('click', '.toggle-cols-action', {}, function (e) {
         
         // Get elements
@@ -420,14 +481,14 @@ $(document).ready (function () {
         });
         
         
-        
         // Store
-        toggle_columns ();
+        toggle_columns (toggled_columns);
         localStorage.setItem ('toggled-columns', toggled_columns);
         
     });
     
     
-    toggle_columns ();
+    // Initial toggled columns
+    toggle_columns (toggled_columns);
 
 });

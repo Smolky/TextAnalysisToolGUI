@@ -30,6 +30,10 @@ if (isset ($_POST['configuration'])) {
     $dictionary = 'assets/configuration/temp.xml';
 }
 
+if (isset ($_POST['configuration_file'])) {
+    $dictionary = 'assets/configuration/' . $_POST['configuration_file'] . '.xml';
+}
+
 
 // Collect dimensions
 $raw_config = file_get_contents ($dictionary);

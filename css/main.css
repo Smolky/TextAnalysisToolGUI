@@ -356,7 +356,7 @@ table tbody td {
    ========================================================================== */
 
 /* Large desktops and laptops */
-@media (min-width: 1200px) {
+@media (min-width: 481px) {
 
     body, html, main {
         height: 100%;
@@ -370,6 +370,12 @@ table tbody td {
     .filter-wrapper {
         border-right: 1px solid black;
         box-shadow: 0rem 0 1rem #333;
+    }
+    
+    .modal-header .close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
     }
 
 }

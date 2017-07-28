@@ -204,7 +204,7 @@
                                             Custom
                                         </option>
                                     
-                                        <?php foreach (array ('es' => 'Spanish', 'en' => 'English') as $key => $language) : ?>
+                                        <?php foreach (array ('spanish' => 'Spanish', 'english' => 'English') as $key => $language) : ?>
                                             <option 
                                                 data-url="https://github.com/Smolky/TextAnalysisTool/tree/master/assets/dictionaries/<?= $key ?>" 
                                                 <?= ($_POST['dictionary'] ?? '') == $key ? 'selected' : '' ?> 
