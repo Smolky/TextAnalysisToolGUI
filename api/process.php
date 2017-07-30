@@ -15,46 +15,25 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
- 
- 
+
+
 // Autoload
-require "vendor/autoload.php";
-
-
-// Constants
-define ('TWITTER_KEY', 'f2Jmemv9jXCdSZAqQmwKgnQZu');
-define ('TWITTER_SECRET', 'qDXvXA3tyJlvYWwMNCc5hjB3x3Oi0lX8jMhUjW9gEGx7BA79IC');
-define ('TWITTER_ACCESS_TOKEN', '290025147-wiq2HHHPRILjS4pPQz3XCt3BkL6u6d4tFQuFETu0');
-define ('TWITTER_ACCESS_TOKEN_SECRET', 'A3UzqUHbKjh6PLSndaFVLRal7v4q43W5LohkGwXuOTPZ5');
+require __DIR__ . "/../vendor/autoload.php";
+require "config.php";
 
 
 // Use name spaces
-use Abraham\TwitterOAuth\TwitterOAuth;
+use \Abraham\TwitterOAuth\TwitterOAuth;
 
 
 // Keep track of the tweets
 $tweets = array ();
 
 
-// Load dictionary, Spanish by default
-$dictionary = 'assets/configuration/spanish.xml';
-
-
 // Collect dimensions
 $raw_config = file_get_contents ($dictionary);
 $xml_config = simplexml_load_string ($raw_config);
 $dimensions = $xml_config->dimensions->dimension;
-
-
-// Configuration
-if (isset ($_POST['configuration'])) {
-    file_put_contents ('assets/configuration/temp.xml', $_POST['configuration']);
-    $dictionary = 'assets/configuration/temp.xml';
-}
-
-if (isset ($_POST['configuration_file'])) {
-    $dictionary = 'assets/configuration/' . $_POST['configuration_file'] . '.xml';
-}
 
 
 // Argot
@@ -144,7 +123,7 @@ $argot = [
 
 
 // Configure corrector
-$pspell_link = pspell_new ("es", "", "", "", (PSPELL_FAST | PSPELL_RUN_TOGETHER));
+$pspell_link = pspell_new ("es", "", "", "utf-8", (PSPELL_FAST | PSPELL_RUN_TOGETHER));
 
 
 /**
@@ -157,19 +136,33 @@ function spell_check ($text) {
     global $pspell_link;
     
     
-    return preg_replace_callback ('/\b\w+\b/i', function ($matches) use ($pspell_link) {
+    // Get the words from the string
+    // @link https://stackoverflow.com/questions/11649019/preg-match-with-international-characters-and-accents
+    return preg_replace_callback ('/\b\w+\b/ui', function ($matches) use ($pspell_link) {
         
-        if ( ! pspell_check ($pspell_link, reset ($matches))) {
-            
-            $suggestions = pspell_suggest ($pspell_link, reset ($matches));
-            if ($suggestions) {
-                return reset ($suggestions);
-            }
-            
+        // Word has the first match
+        $word = reset ($matches);
+        
+        
+        // It's valid?
+        if (pspell_check ($pspell_link, $word)) {
+            return $word;
         }
-
         
-        return reset ($matches);
+        
+        // IF word it's not valid, maybe it's a name
+        // We will check it against the first letter
+        $chr = mb_substr ($word, 0, 1, "UTF-8");
+        if (mb_strtolower ($chr, "UTF-8") != $chr) {
+            return $word;
+        }
+        
+        
+        // Fetch suggestions
+        $suggestions = pspell_suggest ($pspell_link, $word);
+        if ($suggestions) {
+            return reset ($suggestions);
+        }
     
     }, $text);
 }
@@ -188,6 +181,7 @@ function store_tweets ($query, $max_results = null) {
     // Global
     global $tweets;
     global $argot;
+    global $pspell_link;
     
     
     // Max ID will store the last tweet for pagination
@@ -248,7 +242,7 @@ function store_tweets ($query, $max_results = null) {
             }
             
             
-            // Remove URLs
+            // Remove tweets formed merely by URLs
             if (0 === strpos ($tweet_text, "http")) {
                 continue;
             }
@@ -263,6 +257,16 @@ function store_tweets ($query, $max_results = null) {
             
             // Parse string to remove initial junky words
             $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
+            
+            
+            $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
+            $tweet_text = preg_replace ($regex, '', $tweet_text);
+            
+            
+            // Maybe the tweet was empty after removing data
+            if ( ! $tweet_text) {
+                continue;
+            }
             
             
             // Fixing argot
@@ -297,21 +301,7 @@ function store_tweets ($query, $max_results = null) {
             
             
             // Autocorrect
-            $tweet_text = preg_replace_callback ('/\b\w+\b/', function ($matches) use ($pspell_link) {
-            
-                print_r ($matches);
-            
-                // 
-                $suggestions = pspell_suggest ($pspell_link, reset ($matches));
-                
-                if ($suggestions) {
-                    return reset ($suggestions);
-                }
-                
-                return reset ($matches);
-            
-            }, $tweet_text);
-            
+            $tweet_text = spell_check ($tweet_text);
             
             
             // Advance
@@ -327,7 +317,7 @@ function store_tweets ($query, $max_results = null) {
             
             
             // Get file name
-            $filename = 'temp/' . str_pad ($tweet_index, 6, "0", STR_PAD_LEFT) . '.txt';
+            $filename = TEMP_URL . str_pad ($tweet_index, 6, "0", STR_PAD_LEFT) . '.txt';
             
             
             // Store content
@@ -366,7 +356,7 @@ function store_tweets ($query, $max_results = null) {
 
 
 // Remove files
-array_map ('unlink', glob ("temp/*"));
+array_map ('unlink', glob (TEMP_URL + '*'));
 
 
 // Uploading files
@@ -388,7 +378,7 @@ if (isset ($_POST['file'])) {
         // Text files
         default:
         case 'text/plain':
-            file_put_contents ('temp/000.txt', $file);
+            file_put_contents (TEMP_URL . '0000.txt', $file);
             break;
         
         
@@ -404,12 +394,10 @@ if (isset ($_POST['file'])) {
             $zip = new \ZipArchive;
             $res = $zip->open ($temp_file_url);
             
-            echo $res;
             echo ' ' . ZipArchive::ER_NOZIP;
             
             if (true === $res) {
-                echo 'test';
-                $zip->extractTo ('temp');
+                $zip->extractTo (TEMP_URL);
                 $zip->close();
             }
             break;
@@ -422,19 +410,19 @@ if (isset ($_POST['file'])) {
 
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
-    file_put_contents ('temp/000.txt', spell_check ($_POST['content']));
+    file_put_contents (TEMP_URL . '0000.txt', spell_check ($_POST['content']));
 
 }
 
 
 // Parse
 $then = microtime (true);
-exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s temp -c " . $dictionary . " -f %s,", $output); 
+exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s " . TEMP_URL . " -c " . $dictionary . " -f %s,", $output); 
 $now = microtime (true);
 
 
 // Remove files
-array_map ('unlink', glob ("temp/*"));
+array_map ('unlink', glob (TEMP_URL . "*"));
 
 
 

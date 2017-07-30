@@ -1,4 +1,7 @@
 {
+
+    "name": "smolky/umutextstats",
+
     "require": {
         "abraham/twitteroauth": "^0.7.4"
     }

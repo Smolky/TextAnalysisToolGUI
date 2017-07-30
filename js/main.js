@@ -27,6 +27,10 @@ $(document).ready (function () {
     var xhr;
     
     
+    // API preffix filter
+    var api_base_url = 'api/';
+    
+    
     // Get common DOM objects
     var body = $('body');
     var main = $('main');
@@ -167,7 +171,7 @@ $(document).ready (function () {
         // Perform AJAX Call
         $.ajax ({
             method: 'POST',
-            url: 'process-header.php', 
+            url: api_base_url + 'process-header.php', 
             dataType: "html",
             data: data,
             success: function (html) {
@@ -228,7 +232,7 @@ $(document).ready (function () {
                 
     
                 $.ajax ({
-                    url: 'download-config.php',
+                    url: api_base_url + 'download-config.php',
                     type: 'POST',
                     dataType: "text",
                     data: {
@@ -282,7 +286,7 @@ $(document).ready (function () {
             // Get file
             xhr = $.ajax ({
                 method: 'POST',
-                url: 'process.php', 
+                url: api_base_url + 'process.php', 
                 dataType: "html",
                 data: data,
                 success: function (html) {
@@ -396,7 +400,7 @@ $(document).ready (function () {
                 
                 // Download file
                 $.ajax ({
-                    url: 'export.php',
+                    url: api_base_url + 'export.php',
                     type: 'POST',
                     data: {
                         content: content
@@ -440,7 +444,7 @@ $(document).ready (function () {
                 
                 // Download file
                 $.ajax ({
-                    url: 'export.php',
+                    url: api_base_url + 'export.php',
                     type: 'POST',
                     data: {
                         content: content

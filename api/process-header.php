@@ -12,36 +12,17 @@
  */
 
 // Error configuration
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
- 
- 
+ini_set ('display_errors', 1);
+ini_set ('display_startup_errors', 1);
+error_reporting (E_ALL);
+
+
 // Autoload
-require "vendor/autoload.php";
+require __DIR__ . "/../vendor/autoload.php";
+require __DIR__ . "/config.php";
 
 
-// Default dictionary
-$dictionary = 'assets/configuration/spanish.xml';
 
-// Configuration
-if (isset ($_POST['configuration'])) {
-    file_put_contents ('assets/configuration/temp.xml', $_POST['configuration']);
-    $dictionary = 'assets/configuration/temp.xml';
-}
-
-if (isset ($_POST['configuration_file'])) {
-    $dictionary = 'assets/configuration/' . $_POST['configuration_file'] . '.xml';
-}
-
-
-// Collect dimensions
-$raw_config = file_get_contents ($dictionary);
-$xml_config = simplexml_load_string ($raw_config);
-$dimensions = $xml_config->dimensions->dimension;
-$linear_dimensions = array ();
-
-    
 /**
  * build_linear_dimensions
  *
@@ -109,7 +90,7 @@ function print_table_header_cell ($dimension, $parent_dimension_key='', $level =
         <?php endif ?>
         
         <?php if ("PercentageWordsCapturedFromDictionary" == $class) : ?>
-            <a href="assets/dictionaries/es/<?= $dimension->dictionary ?? $key ?>.txt" target="_blank">
+            <a href="<?= DICTIONARY_URL . $dimension->dictionary ?? $key ?>.txt" target="_blank">
                 <span class="fa fa-list"></span>
             </a>
         <?php endif ?>

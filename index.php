@@ -164,7 +164,7 @@
             
             
             <!-- Right side -->
-            <?php include ('process-header.php') ?>
+            <?php require ('api/process-header.php') ?>
             
         </main>
         
