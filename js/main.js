@@ -76,7 +76,7 @@ $(document).ready (function () {
         style_css = '';
         
         table.find ('tr:first-child th:hidden').each (function () {
-            indexes.push ($(this).index ());
+            indexes.push ($(this).index () + 1);
         });
         
         $.each (indexes, function (index, row_index) {
@@ -104,9 +104,10 @@ $(document).ready (function () {
         }).get();
         
         
+        
         // Get rows
         var rows = $("tbody > tr", table).map (function () { 
-            return [$("td span", this).map (function () { 
+            return [$("span", this).map (function () { 
                 return $.trim (this.innerHTML);
             }).get()];
         }).get();

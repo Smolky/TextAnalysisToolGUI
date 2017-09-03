@@ -351,7 +351,35 @@ function store_tweets ($query, $max_results = null) {
     
     // Remove keys, there are no necessary
     $tweets = array_values ($tweets);
+    
 
+    try {
+        
+        $hostname='localhost';
+        $username='root';
+        $password='nsseaplp';
+        
+        $db = new PDO ("mysql:host=$hostname;dbname=economialtweets;charset=utf8", $username, $password);
+        $db->setAttribute (PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        
+        // Store in database
+        $sql = 'INSERT INTO tweets (twitter_id, tweet) VALUES ';
+        $values = array ();
+        $count = count ($tweets);
+
+        foreach ($tweets as $tweet) {
+            $values[] =  "(" . $db->quote ($tweet['id']) . ", " . $db->quote ($tweet['text']) . ")";
+        }
+        
+        
+        $sql = $sql . implode (', ', $values) . '  ON DUPLICATE KEY UPDATE twitter_id=twitter_id';
+        
+        $stmt = $db->exec ($sql);
+
+    } catch (PDOException $e) {
+        die ($e->getMessage());
+    }
 }
 
 
@@ -410,12 +438,16 @@ if (isset ($_POST['file'])) {
 
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
-    file_put_contents (TEMP_URL . '0000.txt', spell_check ($_POST['content']));
+    $content = spell_check ($_POST['content']);
+    $tweets[]['text'] = $content;
+    file_put_contents (TEMP_URL . '0000.txt', $content);
 
 }
 
 
 // Parse
+echo $dictionary;
+
 $then = microtime (true);
 exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s " . TEMP_URL . " -c " . $dictionary . " -f %s,", $output); 
 $now = microtime (true);
@@ -439,24 +471,32 @@ foreach ($output as $index => $line) : ?>
         <th>
             <?= $index == 0 ? '&nbsp;' : '' ?>
             <?php if ($index != 0) : ?>
-                <?php if (isset ($tweets[$index - 1])) : ?>
+                <strong title="<?= $index ?>">
+                    <?= str_pad ($index, 6, " ") ?>
+                </strong>
+            <?php endif ?>
+        <th>
+            <?php if (isset ($tweets[$index - 1])) : ?>
                 <a href="https://twitter.com/statuses/<?= $tweets[$index - 1]['id'] ?? null ?>" target="_blank">
-                <?php endif ?>
-                    <strong title="<?= $index ?>. <?= isset ($tweets[$index - 1]) ? htmlentities (str_replace ("\n", "", $tweets[$index - 1]['text'])) : "" ?>">
-                        <?= str_pad ($index, 6, " ") ?>
-                    </strong>
-                <?php if (isset ($tweets[$index - 1])) : ?>
+                    <span>
+                        <?= $tweets[$index - 1]['id'] ?? null ?>
+                    </span>
                 </a>
-                <?php endif ?>
+            <?php else : ?>
+                &nbsp;
             <?php endif ?>
         
+        <th>
+            <span>
+                <?= isset ($tweets[$index - 1]) ? htmlentities (str_replace ("\n", "", $tweets[$index - 1]['text'])) : "" ?>
+            </spn>
 
         <?php foreach (explode (',', $line) as $dimension_index => $output) : ?>
             <?php if ( ! $output) : ?>
                 <?php continue ?>
             <?php endif ?>
             <td>
-                <span><?= is_numeric ($output) ? number_format ($output, 2, ".", "") : $output ?></span>
+                <span><?= $output == -1 ? "-" : (is_numeric ($output) ? number_format ($output, 2, ".", "") : $output) ?></span>
             
         <?php endforeach ?>
     </tr>

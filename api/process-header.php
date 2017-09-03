@@ -130,13 +130,16 @@ if ($column_indexes) {
 <table class="table table-bordered table-hover table-striped table-responsive ">
 
     <colgroup>
-        <col span="1" style="background-color: #eee">
+        <col span="1" class="table-first-col" />
+        <col span="2" class="table-second-col" />
     </colgroup>
     
     <!-- Head -->
     <thead>
         <tr>
             <th>&nbsp;</th>
+            <th><span data-toggle="false">ID</span></th>
+            <th><span data-toggle="false">SOURCE</span></th>
             <?php foreach ($dimensions as $dimension) : ?>
                 <?php print_table_header_cell ($dimension) ?>
             <?php endforeach ?>

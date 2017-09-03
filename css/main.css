@@ -162,6 +162,25 @@ td {
     font-family: monospace;
 }
 
+.table-first-col {
+    background-color: #eee;
+}
+
+tbody th:first-child + th + th {
+    display: block;
+    max-width: 100rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tbody th {
+    font-weight: 400;
+    font-style: italic;
+    background-color: #f0f0f0 !important;
+    color: #333 !important;
+}
+
 
 main:before {
     content: "";
@@ -207,15 +226,16 @@ main:before {
     color: #a71930;
 }
 
-.table-hover>tbody>tr:hover,
-.table-hover>tbody>tr:hover > th,
+.table-hover>tbody>tr:hover {
+    background-color: rgba(51,122,183,.7) !important; 
+}
+
 .table-hover>tbody>tr:hover > td {
-    background-color: rgba(51,122,183,.7);
     color: white;
 }
 
 .table-hover>tbody>tr:hover th {
-    color: #fff;
+    color: #333;
 }
 
 
