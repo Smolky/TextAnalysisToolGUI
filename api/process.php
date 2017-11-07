@@ -207,7 +207,7 @@ function store_tweets ($query, $max_results = null) {
             "max_id" => $max_id
         ]);
         
-        
+         
         // No results
         // @link https://dev.twitter.com/rest/public/rate-limiting
         if ( ! $response || isset ($response->error)) {
@@ -226,6 +226,8 @@ function store_tweets ($query, $max_results = null) {
         
             // Get text
             $tweet_text = $tweet->text;
+            $tweet_user = $tweet->user->screen_name;
+            
             
             
             // Filtering retweets
@@ -259,8 +261,8 @@ function store_tweets ($query, $max_results = null) {
             $tweet_text = trim (preg_replace ('/^(@\w+)*\:/i', '', $tweet_text));
             
             
-            $regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
-            $tweet_text = preg_replace ($regex, '', $tweet_text);
+            //$regex = "@(https?://([-\w\.]+[-\w])+(:\d+)?(/([\w/_\.#-]*(\?\S+)?[^\.\s])?).*$)@";
+            //$tweet_text = preg_replace ($regex, '', $tweet_text);
             
             
             // Maybe the tweet was empty after removing data
@@ -271,7 +273,7 @@ function store_tweets ($query, $max_results = null) {
             
             // Fixing argot
             foreach ($argot as $word => $replacement) {
-                $tweet_text = preg_replace ('/\b' . $word . '\b/i', $replacement, $tweet_text);
+                //$tweet_text = preg_replace ('/\b' . $word . '\b/i', $replacement, $tweet_text);
             }
             
             
@@ -301,7 +303,7 @@ function store_tweets ($query, $max_results = null) {
             
             
             // Autocorrect
-            $tweet_text = spell_check ($tweet_text);
+            //$tweet_text = spell_check ($tweet_text);
             
             
             // Advance
@@ -312,7 +314,8 @@ function store_tweets ($query, $max_results = null) {
             // Store tweets
             $tweets[$max_id] = [
                 'id' => $tweet->id,
-                'text' => $tweet_text
+                'text' => $tweet_text,
+                'user' => $tweet_user
             ];
             
             
@@ -353,32 +356,38 @@ function store_tweets ($query, $max_results = null) {
     $tweets = array_values ($tweets);
     
 
-    try {
-        
-        $hostname='localhost';
-        $username='root';
-        $password='nsseaplp';
-        
-        $db = new PDO ("mysql:host=$hostname;dbname=economialtweets;charset=utf8", $username, $password);
-        $db->setAttribute (PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        
-        // Store in database
-        $sql = 'INSERT INTO tweets (twitter_id, tweet) VALUES ';
-        $values = array ();
-        $count = count ($tweets);
+    if (isset ($_POST['database']) && $_POST['database']) {
+        try {
+            
+            $hostname='localhost';
+            $username='root';
+            $password='root';
+            
+            $db = new PDO ("mysql:host=$hostname;dbname=economialtweets;charset=utf8mb4", $username, $password);
+            $db->setAttribute (PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            
+            // Store in database
+            $sql = 'INSERT INTO tweets (twitter_id, tweet, user) VALUES ';
+            $values = array ();
+            $count = count ($tweets);
 
-        foreach ($tweets as $tweet) {
-            $values[] =  "(" . $db->quote ($tweet['id']) . ", " . $db->quote ($tweet['text']) . ")";
+            foreach ($tweets as $tweet) {
+                $values[] =  "(" 
+                    . $db->quote ($tweet['id']) 
+                    . ", " . $db->quote ($tweet['text']) 
+                    . ", " . $db->quote ($tweet['user']) 
+                    . ")"
+                ;
+            }
+            
+            $sql = $sql . implode (', ', $values) . '  ON DUPLICATE KEY UPDATE tweet=VALUES(tweet)';
+            $stmt = $db->exec ($sql);
+
+        } catch (PDOException $e) {
+            die ($e->getMessage());
         }
         
-        
-        $sql = $sql . implode (', ', $values) . '  ON DUPLICATE KEY UPDATE twitter_id=twitter_id';
-        
-        $stmt = $db->exec ($sql);
-
-    } catch (PDOException $e) {
-        die ($e->getMessage());
     }
 }
 

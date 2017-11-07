@@ -92,7 +92,7 @@
                                     class="form-control" 
                                     name="query" 
                                     placeholder="Cadena de búsqueda para tweets" 
-                                    value="<?= htmlspecialchars ($_POST['query'] ?? '') ?>" 
+                                    value="<?= isset ($_POST['query']) ? htmlspecialchars ($_POST['query']) : '' ?>" 
                                 />
                                 
                                 <input 
@@ -116,7 +116,7 @@
                                     name="content" 
                                     class="form-control"
                                     placeholder="Cadena de texto"
-                                ><?= htmlspecialchars ($_POST['content'] ?? '') ?></textarea>
+                                ><?= isset ($_POST['content']) ? htmlspecialchars ($_POST['content']) : '' ?></textarea>
                                     
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                                         <?php foreach (array ('spanish' => 'Spanish', 'english' => 'English') as $key => $language) : ?>
                                             <option 
                                                 data-url="https://github.com/Smolky/TextAnalysisTool/tree/master/assets/dictionaries/<?= $key ?>" 
-                                                <?= ($_POST['dictionary'] ?? '') == $key ? 'selected' : '' ?> 
+                                                <?= (isset ($_POST['dictionary']) ? $_POST['dictionary'] : '') == $key ? 'selected' : '' ?> 
                                                 value="<?= $key ?>">
                                                 <?= $language ?>
                                             </option>
