@@ -30,6 +30,7 @@ use \Abraham\TwitterOAuth\TwitterOAuth;
 $tweets = array ();
 
 
+
 // Collect dimensions
 $raw_config = file_get_contents ($dictionary);
 $xml_config = simplexml_load_string ($raw_config);
@@ -393,7 +394,7 @@ function store_tweets ($query, $max_results = null) {
 
 
 // Remove files
-array_map ('unlink', glob (TEMP_URL + '*'));
+array_map ('unlink', glob (TEMP_URL . '*'));
 
 
 // Uploading files
@@ -415,7 +416,25 @@ if (isset ($_POST['file'])) {
         // Text files
         default:
         case 'text/plain':
-            file_put_contents (TEMP_URL . '0000.txt', $file);
+        
+            foreach (preg_split("/\\r\\n|\\r|\\n/", $file) as $index => $content) {
+                
+                if ( ! $content) {
+                    continue;
+                }
+                
+                $filename = TEMP_URL . str_pad ($index + 1, 6, "0", STR_PAD_LEFT) . '.txt';
+                file_put_contents ($filename, $content);
+                
+                
+                // Store tweets
+                $tweets[$index] = [
+                    'id' => $index,
+                    'text' => $content,
+                    'user' => null
+                ];
+                
+            }
             break;
         
         
@@ -447,23 +466,22 @@ if (isset ($_POST['file'])) {
 
     
 } elseif (isset ($_POST['content']) && ! empty ($_POST['content'])) {
-    $content = spell_check ($_POST['content']);
+    // $content = spell_check ($_POST['content']);
+    $content = $_POST['content'];
     $tweets[]['text'] = $content;
-    file_put_contents (TEMP_URL . '0000.txt', $content);
+    file_put_contents (TEMP_URL . '00000.txt', $content);
 
 }
 
 
 // Parse
-echo $dictionary;
-
 $then = microtime (true);
 exec ("java -jar TextAnalysis-0.0.1-SNAPSHOT.jar -s " . TEMP_URL . " -c " . $dictionary . " -f %s,", $output); 
 $now = microtime (true);
 
 
 // Remove files
-array_map ('unlink', glob (TEMP_URL . "*"));
+// array_map ('unlink', glob (TEMP_URL . "*"));
 
 
 
