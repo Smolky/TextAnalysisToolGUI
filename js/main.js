@@ -99,15 +99,15 @@ $(document).ready (function () {
     var fetch_data = function (separator) {
         
         // Get headers
-        var headers = $("thead th span[data-toggle]", table).map (function () {
+        var headers = $("thead th:gt(2) span[data-toggle]", table).map (function () {
             return $.trim (this.innerHTML);
         }).get();
         
         
         
         // Get rows
-        var rows = $("tbody > tr", table).map (function () { 
-            return [$("span", this).map (function () { 
+        var rows = $("tbody > tr", table).map (function () {
+            return [$("td span", this).map (function () { 
                 return $.trim (this.innerHTML);
             }).get()];
         }).get();

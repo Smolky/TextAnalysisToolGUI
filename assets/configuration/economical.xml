@@ -67,10 +67,58 @@
                     <description>The average number of words per sentence</description>
                 </dimension>
                 <dimension>
-                    <key>Sixltr</key>
+                    <key>6ltr</key>
                     <class>WordsLongerThanNDimension</class>
                     <wordlength>6</wordlength>
                     <description>The number of words bigger than 6 characters</description>
+                </dimension>
+                <dimension>
+                    <key>7ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>7</wordlength>
+                    <description>The number of words bigger than 7 characters</description>
+                </dimension>
+                <dimension>
+                    <key>8ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>8</wordlength>
+                    <description>The number of words bigger than 8 characters</description>
+                </dimension>
+                <dimension>
+                    <key>9ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>9</wordlength>
+                    <description>The number of words bigger than 9 characters</description>
+                </dimension>
+                <dimension>
+                    <key>10ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>10</wordlength>
+                    <description>The number of words bigger than 10 characters</description>
+                </dimension>
+                <dimension>
+                    <key>11ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>11</wordlength>
+                    <description>The number of words bigger than 11 characters</description>
+                </dimension>
+                <dimension>
+                    <key>12ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>12</wordlength>
+                    <description>The number of words bigger than 12 characters</description>
+                </dimension>
+                <dimension>
+                    <key>13ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>13</wordlength>
+                    <description>The number of words bigger than 13 characters</description>
+                </dimension>
+                <dimension>
+                    <key>14ltr</key>
+                    <class>WordsLongerThanNDimension</class>
+                    <wordlength>14</wordlength>
+                    <description>The number of words bigger than 14 characters</description>
                 </dimension>
                 <dimension>
                     <key>15ltr</key>
@@ -166,6 +214,21 @@
                     <class>PercentageWordsCapturedFromDictionary</class>
                 </dimension>
                 <dimension>
+                    <key>verbs-regular</key>
+                    <description>Percentage of regulary verbs</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                </dimension>
+                <dimension>
+                    <key>verbs-regular-past</key>
+                    <description>Percentage of regulary verbs in past</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                </dimension>
+                <dimension>
+                    <key>verbs-regular-future</key>
+                    <description>Percentage of regulary verbs in future</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                </dimension>
+                <dimension>
                     <key>verbs-auxiliary</key>
                     <description>Percentage of auxiliary verbs</description>
                     <class>PercentageWordsCapturedFromDictionary</class>
@@ -212,7 +275,18 @@
                     <description>Total numbers identified</description>
                     <class>NumbersDimension</class>
                 </dimension>
-                
+                <dimension>
+                    <key>positive-numbers</key>
+                    <description>Total of positive numbers identified</description>
+                    <class>PatternDimension</class>
+                    <pattern>\\b\\+?[1-9]\\d*\\b</pattern>
+                </dimension>
+                <dimension>
+                    <key>negative-numbers</key>
+                    <description>Total of negative numbers identified</description>
+                    <class>PatternDimension</class>
+                    <pattern>\\b\\-\\d+\\b</pattern>
+                </dimension>
                 <dimension>
                     <key>quantitative</key>
                     <description>Percentage of quantitative</description>
@@ -360,9 +434,9 @@
         </dimension>
         
         
-        <!-- Biological -->
+        <!-- Time -->
         <dimension>
-            <key>time</key>
+            <key>verb-time</key>
             <dimensions>
                 <dimension>
                     <key>focuspast</key>
@@ -402,7 +476,7 @@
         
         <!-- Personal -->
         <dimension>
-            <key>personal</key>
+            <key>personal-issues</key>
             <dimensions>
                 <dimension>
                     <key>death</key>
@@ -492,6 +566,11 @@
         <dimension>
             <key>punctuation</key>
             <dimensions>
+                <dimension>
+                    <key>percentage</key>
+                    <class>CharacterCountDimension</class>
+                    <character>%</character>
+                </dimension>
                 <dimension>
                     <key>periods</key>
                     <class>CharacterCountDimension</class>

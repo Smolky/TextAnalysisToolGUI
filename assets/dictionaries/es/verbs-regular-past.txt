@@ -1,0 +1,13 @@
+\\[a-zA-Z]{3}aba
+\\[a-zA-Z]{3}abas
+\\[a-zA-Z]{3}aban
+\\[a-zA-Z]{3}ábamos
+\\[a-zA-Z]{3}é
+\\[a-zA-Z]{3}í
+\\[a-zA-Z]{3}aste
+\\[a-zA-Z]{3}iste
+\\[a-zA-Z]{3}ió
+\\[a-zA-Z]{3}imos
+\\[a-zA-Z]{3}isteis
+\\[a-zA-Z]{3}aron
+\\[a-zA-Z]{3}ieron

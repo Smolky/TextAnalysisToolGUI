@@ -402,7 +402,7 @@ if (isset ($_POST['file'])) {
     
     
     // Get file
-    $file = base64_decode ($_POST['file']);
+    $file = file_get_contents ($_POST['file']);
     
     
     // Get mime type
