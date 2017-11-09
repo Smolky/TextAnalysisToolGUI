@@ -1,0 +1,2 @@
+\b[a-zA-Z]{3,}(o|as|a|amos|ais|an)\b
+\b(estoy|estás|está|estamos|estáis|están)\s[a-zA-Z]{1,16}(ando|endo)(se|le)?\b

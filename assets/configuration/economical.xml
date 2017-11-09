@@ -6,11 +6,11 @@
     
     
     <!-- Configuration -->
-    <dimensions>
+    <dimensions> 
         
         <!-- Word count -->
         <dimension>
-            <key>wc</key>
+            <key>words-count</key>
             <class>WordCountDimension</class>
             <description>Counts how many words there are in the text</description>
         </dimension>
@@ -18,7 +18,7 @@
         
         <!-- Words per sentence -->
         <dimension>
-            <key>wps</key>
+            <key>words-per-sentence</key>
             <class>WordsPerSentenceDimension</class>
             <description>The average number of words per sentence</description>
         </dimension>
@@ -26,192 +26,200 @@
         
         <!-- Words length average -->
         <dimension>
-            <key>w-avg</key>
+            <key>words-length-avg</key>
             <class>WordAverageLengthDimension</class>
             <description>The average length of the words</description>
         </dimension>
         
         
+        <!-- Sentence count -->
+        <dimension>
+            <key>sentences-count</key>
+            <class>SentenceCountDimension</class>
+            <description>Counts how many dimensions there are in the text</description>
+        </dimension>
+        
+        
+        <dimension>
+            <key>words-in-dictionary</key>
+            <class>MatchingRegularExpressionsFromDictionary</class>
+            <dictionary>es</dictionary>
+            <description>The number of words inside a dictionary</description>
+        </dimension>
+        <dimension>
+            <key>words-in-dictionary-avg</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>es</dictionary>
+            <description>The percentage of words inside a dictionary</description>
+        </dimension>
+        
+        <!-- Length -->
+        <dimension>
+            <key>words-with-1ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>1</wordlength>
+            <description>The number of words bigger than 1 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-2ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>2</wordlength>
+            <description>The number of words bigger than 2 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-3ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>3</wordlength>
+            <description>The number of words bigger than 3 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-4ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>4</wordlength>
+            <description>The number of words bigger than 4 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-5ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>5</wordlength>
+            <description>The number of words bigger than 5 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-6ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>6</wordlength>
+            <description>The number of words bigger than 6 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-7ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>7</wordlength>
+            <description>The number of words bigger than 7 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-8ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>8</wordlength>
+            <description>The number of words bigger than 8 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-9ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>9</wordlength>
+            <description>The number of words bigger than 9 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-10ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>10</wordlength>
+            <description>The number of words bigger than 10 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-11ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>11</wordlength>
+            <description>The number of words bigger than 11 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-12ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>12</wordlength>
+            <description>The number of words bigger than 12 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-13ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>13</wordlength>
+            <description>The number of words bigger than 13 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-14ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>14</wordlength>
+            <description>The number of words bigger than 14 characters</description>
+        </dimension>
+        <dimension>
+            <key>words-with-15ltr</key>
+            <class>WordsEqualToNPercentageDimension</class>
+            <wordlength>15</wordlength>
+            <description>The number of words bigger than 15 characters</description>
+        </dimension>
+        
         <!-- Punctuation -->
         <dimension>
-            <key>percentages</key>
+            <key>char-percentages</key>
             <class>CharacterPercentageDimension</class>
             <character>%</character>
         </dimension>
         <dimension>
-            <key>periods</key>
+            <key>char-periods</key>
             <class>CharacterPercentageDimension</class>
             <character>.</character>
         </dimension>
         <dimension>
-            <key>commas</key>
+            <key>char-commas</key>
             <class>CharacterPercentageDimension</class>
             <character>,</character>
         </dimension>
         <dimension>
-            <key>colons</key>
+            <key>char-colons</key>
             <class>CharacterPercentageDimension</class>
             <character>:</character>
         </dimension>
         <dimension>
-            <key>semicolons</key>
+            <key>char-semicolons</key>
             <class>CharacterPercentageDimension</class>
             <character>;</character>
         </dimension>
         <dimension>
-            <key>open-question</key>
+            <key>char-open-question</key>
             <class>CharacterPercentageDimension</class>
             <character>¿</character>
-        </dimension>        
+        </dimension>
         <dimension>
             <key>close-question</key>
             <class>CharacterPercentageDimension</class>
             <character>?</character>
         </dimension>
         <dimension>
-            <key>open-exclamation</key>
+            <key>char-open-exclamation</key>
             <class>CharacterPercentageDimension</class>
             <character>¡</character>
-        </dimension>        
+        </dimension>
         <dimension>
-            <key>close-exclamation</key>
+            <key>char-close-exclamation</key>
             <class>CharacterPercentageDimension</class>
             <character>!</character>
         </dimension>
         <dimension>
-            <key>dashes</key>
+            <key>char-dashes</key>
             <class>CharacterPercentageDimension</class>
             <character>-</character>
         </dimension>
         <dimension>
-            <key>single-quotes</key>
+            <key>char-single-quotes</key>
             <class>CharacterPercentageDimension</class>
             <character>'</character>
-        </dimension>        
+        </dimension>
         <dimension>
-            <key>double-quotes</key>
+            <key>char-double-quotes</key>
             <class>CharacterPercentageDimension</class>
             <character>"</character>
         </dimension>
         <dimension>
-            <key>open-parenthesis</key>
+            <key>char-open-parenthesis</key>
             <class>CharacterPercentageDimension</class>
             <character>(</character>
         </dimension>
         <dimension>
-            <key>close-parenthesis</key>
+            <key>char-close-parenthesis</key>
             <class>CharacterPercentageDimension</class>
             <character>)</character>
         </dimension>
+        
         <dimension>
             <key>emoticons</key>
             <class>EmoticonsDimension</class>
-        </dimension>        
-        
-        
-        <!-- Length -->
-        <dimension>
-            <key>1ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>1</wordlength>
-            <description>The number of words bigger than 1 characters</description>
-        </dimension>        
-        <dimension>
-            <key>2ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>2</wordlength>
-            <description>The number of words bigger than 2 characters</description>
-        </dimension>        
-        <dimension>
-            <key>3ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>3</wordlength>
-            <description>The number of words bigger than 3 characters</description>
-        </dimension>        
-        <dimension>
-            <key>4ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>4</wordlength>
-            <description>The number of words bigger than 4 characters</description>
-        </dimension>
-        <dimension>
-            <key>5ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>5</wordlength>
-            <description>The number of words bigger than 5 characters</description>
-        </dimension>        
-        <dimension>
-            <key>6ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>6</wordlength>
-            <description>The number of words bigger than 6 characters</description>
-        </dimension>
-        <dimension>
-            <key>7ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>7</wordlength>
-            <description>The number of words bigger than 7 characters</description>
-        </dimension>
-        <dimension>
-            <key>8ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>8</wordlength>
-            <description>The number of words bigger than 8 characters</description>
-        </dimension>
-        <dimension>
-            <key>9ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>9</wordlength>
-            <description>The number of words bigger than 9 characters</description>
-        </dimension>
-        <dimension>
-            <key>10ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>10</wordlength>
-            <description>The number of words bigger than 10 characters</description>
-        </dimension>
-        <dimension>
-            <key>11ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>11</wordlength>
-            <description>The number of words bigger than 11 characters</description>
-        </dimension>
-        <dimension>
-            <key>12ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>12</wordlength>
-            <description>The number of words bigger than 12 characters</description>
-        </dimension>
-        <dimension>
-            <key>13ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>13</wordlength>
-            <description>The number of words bigger than 13 characters</description>
-        </dimension>
-        <dimension>
-            <key>14ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>14</wordlength>
-            <description>The number of words bigger than 14 characters</description>
-        </dimension>
-        <dimension>
-            <key>15ltr</key>
-            <class>WordsEqualToNPercentageDimension</class>
-            <wordlength>15</wordlength>
-            <description>The number of words bigger than 15 characters</description>
-        </dimension>
-        
-        <dimension>
-            <key>dic</key>
-            <class>MatchingRegularExpressionsFromDictionary</class>
-            <dictionary>es</dictionary>
-            <description>The number of words inside a dictionary</description>
-        </dimension>
-        <dimension>
-            <key>dic-avg</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>es</dictionary>
-            <description>The percentage of words inside a dictionary</description>
         </dimension>
         
         
@@ -269,7 +277,7 @@
                 <dimension>
                     <key>impersonal-pronouns</key>
                     <description>Impersonal pronouns</description>
-                    <class>MatchingRegularExpressionsFromDictionary</class>
+                    <class>PercentageWordsCapturedFromDictionary</class>
                     <dictionary>impersonal-pronouns</dictionary>
                 </dimension>
             </dimensions>
@@ -282,10 +290,19 @@
             <class>PercentageWordsCapturedFromDictionary</class>
         </dimension>
         
+        
+        <dimension>
+            <key>verbs</key>
+            <description>Percentage of regulary verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>verbs</dictionary>
+        </dimension>
+        
         <dimension>
             <key>verbs-regular</key>
             <description>Percentage of regulary verbs</description>
             <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>verbs-regular</dictionary>
         </dimension>
         
         <dimension>
@@ -295,9 +312,47 @@
         </dimension>
         
         <dimension>
+            <key>verbs-regular-present</key>
+            <description>Percentage of regulary verbs in present</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+        
+        <dimension>
             <key>verbs-regular-future</key>
             <description>Percentage of regulary verbs in future</description>
             <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+        
+        <dimension>
+            <key>verbs-conditional</key>
+            <description>Percentage of conditional verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+        
+        <dimension>
+            <key>verbs-copulative</key>
+            <description>Percentage of copulative verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+        
+        <dimension>
+            <key>verbs-transitive</key>
+            <description>Percentage of transitive verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+        
+        <dimension>
+            <key>verbs-intransitive</key>
+            <description>Percentage of intransitive verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+        </dimension>
+
+        
+        <dimension>
+            <key>verbs-irregular</key>
+            <description>Percentage of irregulary verbs</description>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>verbs-irregular</dictionary>
         </dimension>
         
         <dimension>
@@ -351,10 +406,12 @@
             <class>PatternDimension</class>
             <pattern>\b\-\d+\b</pattern>
         </dimension>
+        
         <dimension>
             <key>quantitative</key>
             <description>Percentage of quantitative</description>
             <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>quantifiers</dictionary>
         </dimension>
         
         
@@ -363,7 +420,7 @@
             <description>Percentage of positive emotions</description>
             <class>PercentageWordsCapturedFromDictionary</class>
             <dictionary>positive</dictionary>
-        </dimension>                    
+        </dimension>
         <dimension>
             <key>affect-anxiety</key>
             <description>Percentage of words related with anxiety</description>
@@ -593,7 +650,7 @@
             <key>core-risk</key>
             <class>PercentageWordsCapturedFromDictionary</class>
             <dictionary>risk</dictionary>
-        </dimension>        
+        </dimension>
 
     </dimensions>
 </configuration>

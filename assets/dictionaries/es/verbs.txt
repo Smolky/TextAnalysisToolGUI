@@ -3614,6 +3614,7 @@ ganaste.*
 gané
 gane.*
 ganéis
+gana
 gano
 ganó
 gasta

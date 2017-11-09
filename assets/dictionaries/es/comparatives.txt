@@ -1,0 +1,5 @@
+más\s\w\sque
+más\s\w\sde
+tan\s\w\scomo
+tantos\s\w\scomo
+\b[a-zA-Z]{3,}(ísimo|ísima|ísimos|ísimas)\b

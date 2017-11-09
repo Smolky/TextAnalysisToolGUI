@@ -1,6 +1,3 @@
-\\[a-zA-Z]{3}é
-\\[a-zA-Z]{3}ás
-\\[a-zA-Z]{3}á
-\\[a-zA-Z]{3}emos
-\\[a-zA-Z]{3}éis
-\\[a-zA-Z]{3}án
+\b[a-zA-Z]{3,}(é|ás|á|emos|éis|án)\b
+\b(habré|habras|habrá|habremos|habréis|habrán)\s[a-zA-Z]{3,}(ado|ido)\b
+\b(voy|vas|va|vamos|vaís|van)\sa\s[a-zA-Z]{1,16}(ar|er|ir)\b

@@ -1,0 +1,2 @@
+\b[a-zA-Z]{3,}(ía|as|íamos|ían)\b
+\b(habría|habrías|habría|habríamos|habríais|habrían)\s[a-zA-Z]{3,}(ado|ido)\b
