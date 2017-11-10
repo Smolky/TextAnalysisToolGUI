@@ -16,6 +16,14 @@
         </dimension>
         
         
+        <!-- Sentence count -->
+        <dimension>
+            <key>sentences-count</key>
+            <class>SentenceCountDimension</class>
+            <description>Counts how many dimensions there are in the text</description>
+        </dimension>
+        
+        
         <!-- Words per sentence -->
         <dimension>
             <key>words-per-sentence</key>
@@ -32,20 +40,16 @@
         </dimension>
         
         
-        <!-- Sentence count -->
-        <dimension>
-            <key>sentences-count</key>
-            <class>SentenceCountDimension</class>
-            <description>Counts how many dimensions there are in the text</description>
-        </dimension>
-        
-        
+        <!-- Total words in the dictionary -->
         <dimension>
             <key>words-in-dictionary</key>
             <class>MatchingRegularExpressionsFromDictionary</class>
             <dictionary>es</dictionary>
             <description>The number of words inside a dictionary</description>
         </dimension>
+        
+        
+        <!-- % of the words of the text that belong to a dictionary -->
         <dimension>
             <key>words-in-dictionary-avg</key>
             <class>PercentageWordsCapturedFromDictionary</class>
@@ -53,7 +57,8 @@
             <description>The percentage of words inside a dictionary</description>
         </dimension>
         
-        <!-- Length -->
+        
+        <!-- Word's Length -->
         <dimension>
             <key>words-with-1ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
@@ -145,6 +150,7 @@
             <description>The number of words bigger than 15 characters</description>
         </dimension>
         
+        
         <!-- Punctuation -->
         <dimension>
             <key>char-percentages</key>
@@ -197,6 +203,11 @@
             <character>-</character>
         </dimension>
         <dimension>
+            <key>char-low-dashes</key>
+            <class>CharacterPercentageDimension</class>
+            <character>_</character>
+        </dimension>        
+        <dimension>
             <key>char-single-quotes</key>
             <class>CharacterPercentageDimension</class>
             <character>'</character>
@@ -205,6 +216,16 @@
             <key>char-double-quotes</key>
             <class>CharacterPercentageDimension</class>
             <character>"</character>
+        </dimension>
+        <dimension>
+            <key>char-open-quotes</key>
+            <class>CharacterPercentageDimension</class>
+            <character>«</character>
+        </dimension>
+        <dimension>
+            <key>char-close-quotes</key>
+            <class>CharacterPercentageDimension</class>
+            <character>»</character>
         </dimension>
         <dimension>
             <key>char-open-parenthesis</key>
