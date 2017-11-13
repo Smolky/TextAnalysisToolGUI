@@ -243,6 +243,19 @@
             <class>EmoticonsDimension</class>
         </dimension>
         
+        <dimension>
+            <key>genre-femenine</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>genre-femenine</dictionary>
+        </dimension>
+        
+        <dimension>
+            <key>genre-masculine</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>genre-masculine</dictionary>
+        </dimension>
+        
+        
         
         <!-- FunctionWordsDimension -->
         <dimension>
@@ -638,7 +651,7 @@
         <dimension>
             <key>informal-speech-nonfluencies</key>
             <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>nonfluencies</dictionary>
+            <dictionary>non-fluent-texts</dictionary>
         </dimension>
         <dimension>
             <key>informal-speech-swear</key>

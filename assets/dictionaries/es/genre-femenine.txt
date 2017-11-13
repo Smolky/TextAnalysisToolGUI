@@ -1,0 +1,4 @@
+\w{3,}(a|d|ón|z|te|@|@s)
+NEG:\w{3,}(ma|ta)
+NEG:\w{3,}(itis)
+(noche|piel|gente|clase|imagen|nieve|mano|foto|cárcel|parte)
