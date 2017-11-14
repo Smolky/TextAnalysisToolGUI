@@ -60,94 +60,102 @@
         
         <!-- Word's Length -->
         <dimension>
+            <key>words-longer-6tr</key>
+            <class>WordsLongerThanNPercentageDimension</class>
+            <wordlength>6</wordlength>
+            <description>The number of words bigger than 6 characters</description>
+        </dimension>
+        
+        
+        <dimension>
             <key>words-with-1ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>1</wordlength>
-            <description>The number of words bigger than 1 characters</description>
+            <description>The number of words equal to 1 characters</description>
         </dimension>
         <dimension>
             <key>words-with-2ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>2</wordlength>
-            <description>The number of words bigger than 2 characters</description>
+            <description>The number of words equal to 2 characters</description>
         </dimension>
         <dimension>
             <key>words-with-3ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>3</wordlength>
-            <description>The number of words bigger than 3 characters</description>
+            <description>The number of words equal to 3 characters</description>
         </dimension>
         <dimension>
             <key>words-with-4ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>4</wordlength>
-            <description>The number of words bigger than 4 characters</description>
+            <description>The number of word sequal to 4 characters</description>
         </dimension>
         <dimension>
             <key>words-with-5ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>5</wordlength>
-            <description>The number of words bigger than 5 characters</description>
+            <description>The number of words equal to 5 characters</description>
         </dimension>
         <dimension>
             <key>words-with-6ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>6</wordlength>
-            <description>The number of words bigger than 6 characters</description>
+            <description>The number of words equal to 6 characters</description>
         </dimension>
         <dimension>
             <key>words-with-7ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>7</wordlength>
-            <description>The number of words bigger than 7 characters</description>
+            <description>The number of words equal to 7 characters</description>
         </dimension>
         <dimension>
             <key>words-with-8ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>8</wordlength>
-            <description>The number of words bigger than 8 characters</description>
+            <description>The number of words equal to 8 characters</description>
         </dimension>
         <dimension>
             <key>words-with-9ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>9</wordlength>
-            <description>The number of words bigger than 9 characters</description>
+            <description>The number of words equal to 9 characters</description>
         </dimension>
         <dimension>
             <key>words-with-10ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>10</wordlength>
-            <description>The number of words bigger than 10 characters</description>
+            <description>The number of words equal to 10 characters</description>
         </dimension>
         <dimension>
             <key>words-with-11ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>11</wordlength>
-            <description>The number of words bigger than 11 characters</description>
+            <description>The number of words equal to 11 characters</description>
         </dimension>
         <dimension>
             <key>words-with-12ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>12</wordlength>
-            <description>The number of words bigger than 12 characters</description>
+            <description>The number of words equal to 12 characters</description>
         </dimension>
         <dimension>
             <key>words-with-13ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>13</wordlength>
-            <description>The number of words bigger than 13 characters</description>
+            <description>The number of words equal to 13 characters</description>
         </dimension>
         <dimension>
             <key>words-with-14ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>14</wordlength>
-            <description>The number of words bigger than 14 characters</description>
+            <description>The number of words equal to 14 characters</description>
         </dimension>
         <dimension>
             <key>words-with-15ltr</key>
             <class>WordsEqualToNPercentageDimension</class>
             <wordlength>15</wordlength>
-            <description>The number of words bigger than 15 characters</description>
+            <description>The number of words equal to 15 characters</description>
         </dimension>
         
         
@@ -431,14 +439,20 @@
         <dimension>
             <key>positive-numbers</key>
             <description>Total of positive numbers identified</description>
-            <class>PatternDimension</class>
-            <pattern>\b\+?[1-9]\d*\b</pattern>
+            <class>PatternPercentageDimension</class>
+            <pattern>\b\$?\+?[1-9]\d*\b</pattern>
         </dimension>
         <dimension>
             <key>negative-numbers</key>
             <description>Total of negative numbers identified</description>
-            <class>PatternDimension</class>
-            <pattern>\b\-\d+\b</pattern>
+            <class>PatternPercentageDimension</class>
+            <pattern>\b\$?\-\d+\b</pattern>
+        </dimension>
+        <dimension>
+            <key>roman-numbers</key>
+            <description>Total of roman numbers identified</description>
+            <class>PatternPercentageDimension</class>
+            <pattern>^[MDCLXVI]+$</pattern>
         </dimension>
         
         <dimension>
@@ -450,241 +464,333 @@
         
         
         <dimension>
-            <key>affect-positive</key>
-            <description>Percentage of positive emotions</description>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>positive</dictionary>
-        </dimension>
-        <dimension>
-            <key>affect-anxiety</key>
-            <description>Percentage of words related with anxiety</description>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>anxiety</dictionary>
-        </dimension>
-        <dimension>
-            <key>affect-anger</key>
-            <description>Percentage of words related with anger</description>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>anger</dictionary>
-        </dimension>
-        <dimension>
-            <key>affect-sad</key>
-            <description>Percentage of words related with sadness</description>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sad</dictionary>
+        
+            <key>affect</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>
+                <dimension>
+                    <key>affect-positive</key>
+                    <description>Percentage of positive emotions</description>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>positive</dictionary>
+                </dimension>
+            
+                <dimension>
+                    <key>affect-negative-emotion</key>
+                    <strategy>CompositeStrategyAvg</strategy>
+                    
+                    <dimensions>
+                        <dimension>
+                            <key>affect-anxiety</key>
+                            <description>Percentage of words related with anxiety</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
+                            <dictionary>anxiety</dictionary>
+                        </dimension>
+                        <dimension>
+                            <key>affect-anger</key>
+                            <description>Percentage of words related with anger</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
+                            <dictionary>anger</dictionary>
+                        </dimension>
+                        <dimension>
+                            <key>affect-sad</key>
+                            <description>Percentage of words related with sadness</description>
+                            <class>PercentageWordsCapturedFromDictionary</class>
+                            <dictionary>sad</dictionary>
+                        </dimension>
+                    </dimensions>
+                </dimension>
+                
+            </dimensions>
         </dimension>
         
         
         <dimension>
-            <key>social-family</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>family</dictionary>
+            <key>social-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>
+                <dimension>
+                    <key>social-family</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>family</dictionary>
+                </dimension>
+                <dimension>
+                    <key>social-friendship</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>friendship</dictionary>
+                </dimension>        
+                <dimension>
+                    <key>social-female</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>female</dictionary>
+                </dimension>
+                <dimension>
+                    <key>social-male</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>male</dictionary>
+                </dimension>
+            </dimensions>
         </dimension>
+        
+        
+        
         <dimension>
-            <key>social-female</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>female</dictionary>
-        </dimension>
-        <dimension>
-            <key>social-male</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>male</dictionary>
-        </dimension>
-        <dimension>
-            <key>social-friendship</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>friendship</dictionary>
+            <key>cognitive-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>        
+                <dimension>
+                    <key>cognitive-insight</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>insight</dictionary>
+                </dimension>
+                <dimension>
+                    <key>cognitive-cause</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>cause</dictionary>
+                </dimension>
+                <dimension>
+                    <key>cognitive-discrepancies</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>discrepancies</dictionary>
+                </dimension>
+                <dimension>
+                    <key>cognitive-tentativeness</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>tentativeness</dictionary>
+                </dimension>
+                <dimension>
+                    <key>cognitive-certainty</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>certainty</dictionary>
+                </dimension>
+                <dimension>
+                    <key>cognitive-differ</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>differ</dictionary>
+                </dimension>
+            </dimensions>
         </dimension>
         
         
         <dimension>
-            <key>cognitive-insight</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>insight</dictionary>
-        </dimension>
-        <dimension>
-            <key>cognitive-cause</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>cause</dictionary>
-        </dimension>
-        <dimension>
-            <key>cognitive-discrepancies</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>discrepancies</dictionary>
-        </dimension>
-        <dimension>
-            <key>cognitive-tentativeness</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>tentativeness</dictionary>
-        </dimension>
-        <dimension>
-            <key>cognitive-certainty</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>certainty</dictionary>
-        </dimension>
-        <dimension>
-            <key>cognitive-differ</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>differ</dictionary>
-        </dimension>
+            <key>perceptual-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
         
-        
-        <dimension>
-            <key>perpetual-feel</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>feel</dictionary>
+            <dimensions>
+                <dimension>
+                    <key>perpetual-feel</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>feel</dictionary>
+                </dimension>
+                <dimension>
+                    <key>perpetual-hear</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>hear</dictionary>
+                </dimension>
+                <dimension>
+                    <key>perpetual-see</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>see</dictionary>
+                </dimension>       
+            </dimensions>
         </dimension>
-        <dimension>
-            <key>perpetual-hear</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>hear</dictionary>
-        </dimension>
-        <dimension>
-            <key>perpetual-see</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>see</dictionary>
-        </dimension>       
 
+        
         <dimension>
-            <key>biological-body</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>body</dictionary>
+            <key>biological-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>
+                <dimension>
+                    <key>biological-body</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>body</dictionary>
+                </dimension>
+                <dimension>
+                    <key>biological-health</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>health</dictionary>
+                </dimension>
+                <dimension>
+                    <key>biological-ingesting</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>ingesting</dictionary>
+                </dimension>
+                <dimension>
+                    <key>biological-sex</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>sex</dictionary>
+                </dimension>     
+            </dimensions>
         </dimension>
-        <dimension>
-            <key>biological-health</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>health</dictionary>
-        </dimension>
-        <dimension>
-            <key>biological-ingesting</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>ingesting</dictionary>
-        </dimension>
-        <dimension>
-            <key>biological-sex</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sex</dictionary>
-        </dimension>     
 
+        
+        <!-- Time orientation -->
+        <dimension>
+            <key>time-origientation-past-focus</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>sex</dictionary>
+        </dimension>
+        <dimension>
+            <key>time-origientation-present-focus</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>sex</dictionary>
+        </dimension>
+        <dimension>
+            <key>time-origientation-future-focus</key>
+            <class>PercentageWordsCapturedFromDictionary</class>
+            <dictionary>sex</dictionary>
+        </dimension>
+        
+        <dimension>
+            <key>relativity-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>        
+                <dimension>
+                    <key>relativity-movement</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>sex</dictionary>
+                </dimension>
+                <dimension>
+                    <key>relativity-space</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>space</dictionary>
+                </dimension>
+                <dimension>
+                    <key>relativity-time</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>time</dictionary>
+                </dimension>        
+            </dimensions>
+        </dimension>
+        
+        
+        <dimension>
+            <key>personal-concerns</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>
+                <dimension>
+                    <key>personal-issues-death</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>death</dictionary>
+                </dimension>
+                <dimension>
+                    <key>personal-issues-home</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>home</dictionary>
+                </dimension>
+                <dimension>
+                    <key>personal-issues-pleasure</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>pleasure</dictionary>
+                </dimension>
+                <dimension>
+                    <key>personal-issues-money</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>money</dictionary>
+                </dimension>
+                <dimension>
+                    <key>personal-issues-religion</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>religion</dictionary>
+                </dimension>
+                <dimension>
+                    <key>personal-issues-work</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>work</dictionary>
+                </dimension>
+            </dimensions>
+        </dimension>
+        
+        <dimension>
+            <key>informal-speech</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>
+                <dimension>
+                    <key>informal-speech-assent</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>assent</dictionary>
+                </dimension>
+                <dimension>
+                    <key>informal-speech-fillers</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>fillers</dictionary>
+                </dimension>
+                <dimension>
+                    <key>informal-speech-netspeak</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>netspeak</dictionary>
+                </dimension>
+                <dimension>
+                    <key>informal-speech-nonfluencies</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>non-fluent-texts</dictionary>
+                </dimension>
+                <dimension>
+                    <key>informal-speech-swear</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>swear</dictionary>
+                </dimension>
+            </dimensions>
+        </dimension>
+        
+        
+        <!-- Core thinking -->
+        <dimension>
+            <key>core-processes</key>
+            <strategy>CompositeStrategyAvg</strategy>
+        
+            <dimensions>        
+                <dimension>
+                    <key>core-affiliation</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>affiliation</dictionary>
+                </dimension>
+                <dimension>
+                    <key>core-achievement</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>achievement</dictionary>
+                </dimension>
+                <dimension>
+                    <key>core-power</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>power</dictionary>
+                </dimension>
+                <dimension>
+                    <key>core-reward</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>reward</dictionary>
+                </dimension>
+                <dimension>
+                    <key>core-risk</key>
+                    <class>PercentageWordsCapturedFromDictionary</class>
+                    <dictionary>risk</dictionary>
+                </dimension>        
+            </dimensions>
+        </dimension>
+        
+        
+        <!-- Twitter dimension -->
+        <dimension>
+            <key>hashtags</key>
+            <class>PatternPercentageDimension</class>
+            <pattern>(\s|\A)#(\w+)</pattern>
+        </dimension>
+        
+        <dimension>
+            <key>mentions</key>
+            <class>PatternPercentageDimension</class>
+            <pattern>(\s|\A)@(\w+)</pattern>
+        </dimension>
+        
+        
 
-        <dimension>
-            <key>focuspast</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sex</dictionary>
-        </dimension>
-        <dimension>
-            <key>focuspresent</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sex</dictionary>
-        </dimension>
-        <dimension>
-            <key>focusfuture</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sex</dictionary>
-        </dimension>
-        
-        
-        <dimension>
-            <key>relativity-movement</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>sex</dictionary>
-        </dimension>
-        <dimension>
-            <key>relativity-space</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>space</dictionary>
-        </dimension>
-        <dimension>
-            <key>relativity-time</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>time</dictionary>
-        </dimension>        
-        
-        
-        <dimension>
-            <key>personal-issues-death</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>death</dictionary>
-        </dimension>
-        <dimension>
-            <key>personal-issues-home</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>home</dictionary>
-        </dimension>
-        <dimension>
-            <key>personal-issues-pleasure</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>pleasure</dictionary>
-        </dimension>
-        <dimension>
-            <key>personal-issues-money</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>money</dictionary>
-        </dimension>
-        <dimension>
-            <key>personal-issues-religion</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>religion</dictionary>
-        </dimension>
-        <dimension>
-            <key>personal-issues-work</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>work</dictionary>
-        </dimension>
-        
-        
-        <dimension>
-            <key>informal-speech-assent</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>assent</dictionary>
-        </dimension>
-        <dimension>
-            <key>informal-speech-fillers</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>fillers</dictionary>
-        </dimension>
-        <dimension>
-            <key>informal-speech-netspeak</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>netspeak</dictionary>
-        </dimension>
-        <dimension>
-            <key>informal-speech-nonfluencies</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>non-fluent-texts</dictionary>
-        </dimension>
-        <dimension>
-            <key>informal-speech-swear</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>swear</dictionary>
-        </dimension>
-        
-        
-        <dimension>
-            <key>core-affiliation</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>affiliation</dictionary>
-        </dimension>
-        <dimension>
-            <key>core-achievement</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>achievement</dictionary>
-        </dimension>
-        <dimension>
-            <key>core-power</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>power</dictionary>
-        </dimension>
-        <dimension>
-            <key>core-reward</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>reward</dictionary>
-        </dimension>
-        <dimension>
-            <key>core-risk</key>
-            <class>PercentageWordsCapturedFromDictionary</class>
-            <dictionary>risk</dictionary>
-        </dimension>
 
     </dimensions>
 </configuration>

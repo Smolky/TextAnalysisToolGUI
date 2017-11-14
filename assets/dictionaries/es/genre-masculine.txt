@@ -1,4 +1,4 @@
 \w{3,}(l||o|n|e|r|s|x|ma|ta|@|@s)
 NEG:\w{3,}(is|ie|umbre)
 NEG:(madre|noche|piel|gente|clase|imagen|nieve|mano|foto|cárcel|por)
-arpa
+(arpa)
