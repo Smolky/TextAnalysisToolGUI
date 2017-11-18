@@ -789,7 +789,11 @@
             <pattern>(\s|\A)@(\w+)</pattern>
         </dimension>
         
-        
+        <dimension>
+            <key>twitter urls</key>
+            <class>PatternPercentageDimension</class>
+            <pattern>https://t.co/</pattern>
+        </dimension>
 
 
     </dimensions>
